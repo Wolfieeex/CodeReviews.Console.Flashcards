@@ -1,8 +1,9 @@
 ﻿using Spectre.Console;
+using static Flashcards.Wolfieeex.Model.SelectionEnums;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 
-internal class MainMenu
+internal class MainMenu : Menu
 {
 	internal static void DisplayMainMenu()
 	{
@@ -14,7 +15,15 @@ internal class MainMenu
 				.Centered()
 				.Color(Color.Red));
 
-			//var usersChoice = AnsiConsole.Prompt(
+			var usersChoice = AnsiConsole.Prompt(
+				new SelectionPrompt<MainMenuChoices>()
+				.Title("Welcome to flashcards! Make your selection:")
+				.AddChoices(
+					MainMenuChoices.ManageStacks,
+					MainMenuChoices.ManageFlashcards,
+					MainMenuChoices.Quit)
+				);
+
 		}
 	}
 }
