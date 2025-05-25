@@ -1,4 +1,5 @@
 ﻿using Spectre.Console;
+using System.Text.RegularExpressions;
 using static Flashcards.Wolfieeex.Model.SelectionEnums;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
@@ -9,13 +10,15 @@ public class MainMenu : Menu
 
 	public override void DisplayMenu()
 	{
+		Console.Clear();
+
 		var isMenuRunning = true;
 		while (isMenuRunning)
 		{
 			AnsiConsole.Write(
 				new FigletText("Flashcards")
 				.Centered()
-				.Color(Color.Red));
+				.Color(Color.CadetBlue));
 
 			var userChoice = AnsiConsole.Prompt(
 				new SelectionPrompt<MainMenuChoices>()
@@ -24,15 +27,18 @@ public class MainMenu : Menu
 					MainMenuChoices.ManageStacks,
 					MainMenuChoices.ManageFlashcards,
 					MainMenuChoices.Quit)
+				.UseConverter(x => Regex.Replace(x.ToString(), @"(.)([A-Z]{1})", @"$1 $2"))
 				);
 
 			switch (userChoice)
 			{
 				case MainMenuChoices.ManageStacks:
-					StacksMenu();
+					StacksMenu stacksMenu = new StacksMenu();
+					stacksMenu.DisplayMenu();
 					break;
 				case MainMenuChoices.ManageFlashcards:
-					FlashcardsMenu();
+					FlashcardMenu flashcardMenu = new FlashcardMenu();
+					flashcardMenu.DisplayMenu();
 					break;
 				case MainMenuChoices.Quit:
 					System.Console.Clear();

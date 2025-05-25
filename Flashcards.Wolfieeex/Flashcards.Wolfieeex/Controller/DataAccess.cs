@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Flashcards.Wolfieeex.Model;
 
 internal class DataAccess
 {
@@ -51,6 +52,65 @@ internal class DataAccess
         catch (Exception ex)
         {
             Console.WriteLine($"An Error ocurred whilst creating datatables: {ex.Message}");
+        }
+    }
+
+    internal void InsertStack(Stack stack)
+    {
+        try
+        {
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                string insertQuery = @"
+                INSERT INTO Stacks (Name) VALUES (@Name)";
+                connection.Execute(insertQuery, new { stack.Name });
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine($"There was a problem while inserting a stack: {ex.Message}");
+        }
+    }
+
+    internal IEnumerable<Stack> GetAllStacks()
+    {
+        try
+        {
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                string selectQuery = "SELECT * FROM stacks";
+                var records = connection.Query<Stack>(selectQuery);
+                return records;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"There was a problem while retrieving the stacks: {ex.Message}");
+            return new List<Stack>();
+        }
+    }
+
+    internal void InsertFlashcard(Flashcard flashcard)
+    {
+        try
+        {
+            using (var conn = new SqlConnection(ConnectionString))
+            {
+                conn.Open();
+
+                string insertQuery = @"
+                INSERT INTO Flashcards (Question, Answer, StackId) VALUES (@Question, @Answer, @StackId)";
+                conn.Execute(insertQuery, new { flashcard.Question, flashcard.Answer, flashcard.StackId });
+            }
+        }
+
+        catch (Exception ex)
+        {
+            Console.WriteLine($"There was a problem while inserting a flashcard: {ex.Message}");
         }
     }
 }
