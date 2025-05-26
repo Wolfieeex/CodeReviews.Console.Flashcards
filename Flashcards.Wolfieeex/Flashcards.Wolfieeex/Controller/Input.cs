@@ -1,4 +1,6 @@
-﻿using Spectre.Console;
+﻿using Flashcards.Wolfieeex.Model;
+using Spectre.Console;
+using System.Text.RegularExpressions;
 using static Flashcards.Wolfieeex.Model.InputValidationEnums;
 using static Flashcards.Wolfieeex.View.UserInterface.Menu;
 
@@ -14,19 +16,30 @@ internal class Input
 	private static MenuColors menuColors;
 	private static BackOptions backOptions;
 
-	private static char[] specialSymbols = { '\"', '/', '\\', '<', '>', '{', '}' };
+	private static string specialSymbols = @""", ', /, \\, <, >, {, }, [, ]";
+	private static string specialSymbolsRegex = @"[""'\/\\<>\{\}\[\]]";
 
-	public static string ValidateInput(string text, ValidationType type, MenuColors menuColors, BackOptions backOptions = BackOptions.Blank)
+	private static string input;
+
+	public static void ValidateInput(ref string previousInput, string text, ValidationType type, MenuColors menuColors, BackOptions backOptions = BackOptions.Blank)
 	{
 		validationText = text;
 		validationType = type;
 		Input.menuColors = menuColors;
 		Input.backOptions = backOptions;
+		input = previousInput;
 
 		try
 		{
+			Console.Clear();
 			switch (type)
 			{
+				case ValidationType.Any:
+					ValidateAny();
+					break;
+				case ValidationType.AnyNonBlank:
+					ValidateAnyNonBlank();
+					break;
 				case ValidationType.Text:
 					ValidateText();
 					break;
@@ -36,20 +49,47 @@ internal class Input
 				case ValidationType.DateTime:
 					ValidateDateTime();
 					break;
-				case ValidationType.Any:
-					ValidateAny();
-					break;
 				case ValidationType.TimeSpan:
 					ValidateTimeSpan();
 					break;
 			}
+
+			previousInput = input;
 		}
 		catch (Exception e)
 		{
 			Console.Write($"Some functions haven't been enabled yet in the validation class: {e.Message}\n");
 		}
+	}
 
-		return null;
+	private static void ValidateAnyNonBlank()
+	{
+		DisplayBackOptions();
+		bool validationPending = true;
+		while (validationPending)
+		{
+			string input = AnsiConsole.Prompt(new TextPrompt<string>(validationText).AllowEmpty());
+
+			if (ShouldQuitInputLoop(input))
+				break;
+
+			if (!string.IsNullOrEmpty(input) && input != "")
+			{
+				if (Regex.Match(input, specialSymbolsRegex).Success)
+				{
+					AnsiConsole.Write(new Markup($"You cannot use some of the special characters in your input. Try again.\n\n", style: new Style(foreground: menuColors.NegativeColor)));
+					continue;
+				}
+			}
+			else
+			{
+				AnsiConsole.Write(new Markup("Your input cannot be empty/blank. Try again.\n\n", style: new Style(foreground: menuColors.NegativeColor)));
+				continue;
+			}
+
+			Input.input = input;
+			break;
+		} 
 	}
 
 	private static void ValidateTimeSpan()
@@ -78,22 +118,32 @@ internal class Input
 		bool validationPending = true;
 		while (validationPending)
 		{
-			string input = AnsiConsole.Ask<string>(validationText);
-			if (!string.IsNullOrEmpty(input))
+			string input = AnsiConsole.Prompt(new TextPrompt<string>(validationText).AllowEmpty());
+
+			if (ShouldQuitInputLoop(input))
+				break;
+
+			if (!string.IsNullOrEmpty(input) && input != "")
 			{
-				foreach (char c in specialSymbols)
+				if (Regex.Match(input, specialSymbolsRegex).Success)
 				{
-					if (input.Contains(c))
-					{
-						AnsiConsole.Write(new Markup($"You cannot use some of the special characters in your input ({specialSymbols}). Try again.\n", style: new Style(foreground: menuColors.NegativeColor)));
-						continue;
-					}
+					AnsiConsole.Write(new Markup($"You cannot use some of the special characters in your input. Try again.\n\n", style: new Style(foreground: menuColors.NegativeColor)));
+					continue;
+				}
+				if (Regex.Match(input, @"[0-9]").Success)
+				{
+					AnsiConsole.Write(new Markup($"You cannot use numbers in your input- only plain text with spaces is allowed. Try again.\n\n", style: new Style(foreground: menuColors.NegativeColor)));
+					continue;
 				}
 			}
 			else
 			{
-				AnsiConsole.Write(new Markup("Your input cannot be empty/blank. Try again.\n", style: new Style(foreground: menuColors.NegativeColor)));
+				AnsiConsole.Write(new Markup("Your input cannot be empty/blank. Try again.\n\n", style: new Style(foreground: menuColors.NegativeColor)));
+				continue;
 			}
+
+			Input.input = input;
+			break;
 		}
 	}
 
@@ -101,16 +151,57 @@ internal class Input
 	{
 		if (backOptions == BackOptions.Exit)
 		{
-			AnsiConsole.Write(new Markup("Insert \"e\" to return to previous menu", style: new Style(decoration: Decoration.RapidBlink)).Justify(Justify.Left));
-			Console.SetCursorPosition(0, 0);
+			AnsiConsole.Write(new Markup($"Insert [#{menuColors.Important1Color.ToHex()}]\"e\"[/] to return to previous menu. ", style: new Style(decoration: Decoration.RapidBlink)).Justify(Justify.Right));
+			Console.SetCursorPosition(0, 1);
 		}
 		else if (backOptions == BackOptions.ExitBlank)
 		{
-			throw new NotImplementedException("ExitBlank option for data validation hasn't been enabled yet.");
+			AnsiConsole.Write(new Markup($"Insert [#{menuColors.Important1Color.ToHex()}]\"e\"[/] to return to previous menu. \nOr, press [#{menuColors.Important2Color.ToHex()}]ENTER[/] with blank space  \nto clear out your previous input. ", style: new Style(decoration: Decoration.RapidBlink)).Justify(Justify.Right));
+			Console.SetCursorPosition(0, 3);
 		}
 		else if (backOptions == BackOptions.Blank)
 		{
-			throw new NotImplementedException("Blank option for data validation hasn't been enabled yet.");
+			AnsiConsole.Write(new Markup($"Press [#{menuColors.Important2Color.ToHex()}]ENTER[/] with blank space to clear out your previous input. ", style: new Style(decoration: Decoration.RapidBlink)).Justify(Justify.Right));
+			Console.SetCursorPosition(0, 1);
+		}
+	}
+
+	/// <returns>
+	/// Returns if user input loop should be exited.
+	/// </returns>
+	private static bool ShouldQuitInputLoop(string input)
+	{
+		switch (backOptions)
+		{
+			case BackOptions.None:
+				return false;
+			case BackOptions.Exit:
+				if (string.IsNullOrEmpty(input))
+					return false;
+				else if (input.ToLower() == "e")
+					return true;
+				else 
+					return false;
+			case BackOptions.Blank:
+				if (string.IsNullOrEmpty(input))
+				{
+					Input.input = "";
+					return true;
+				}
+				else
+					return false;
+			case BackOptions.ExitBlank:
+				if (string.IsNullOrEmpty(input))
+				{
+					Input.input = "";
+					return true;
+				}
+				else if (input.ToLower() == "e")
+					return true;
+				else
+					return false;
+			default:
+				throw new ArgumentException("There is an error in Compare method in Input class. No default results are expected in the switch statement.");
 		}
 	}
 }

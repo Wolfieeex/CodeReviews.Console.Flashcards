@@ -113,4 +113,53 @@ internal class DataAccess
             Console.WriteLine($"There was a problem while inserting a flashcard: {ex.Message}");
         }
     }
+
+    internal void BulkInsertRecords(List<Stack> stacks, List<Flashcard> flashcards)
+    {
+        SqlTransaction transaction = null;
+
+        try
+        {
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                transaction = connection.BeginTransaction();
+                connection.Execute("INSERT INTO Stacks (Name) VALUES (@Name)", stacks, transaction: transaction);
+                connection.Execute("INSERT INTO Flashcards (Question, @Answer, @StackId)", flashcards, transaction: transaction);
+
+                transaction.Commit();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"There was a problem while inserting bulk records: {ex.Message}";
+
+            if (transaction != null)
+            {
+                transaction.Rollback();
+            }
+        }
+    }
+
+    internal void DeleteTables()
+    {
+        try
+        {
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                string dropFlashcardsTableSql = @"DROP TABLE Flashcards";
+                connection.Execute(dropFlashcardsTableSql);
+
+                string dropStacksTableSql = @"DROP TABLE Stacks";
+                connection.Execute(dropStacksTableSql);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"There was a problem while dropping tables: {ex.Message}");
+        }
+    }
 }

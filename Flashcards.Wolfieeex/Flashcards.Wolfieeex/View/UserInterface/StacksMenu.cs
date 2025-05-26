@@ -13,11 +13,11 @@ internal class StacksMenu : Menu
 
 	public override void DisplayMenu()
 	{
-		Console.Clear();
-
 		bool IsMenuRunning = true;
 		while (IsMenuRunning)
 		{
+			Console.Clear();
+
 			var userChoice = AnsiConsole.Prompt(
 				new SelectionPrompt<StacksChoices>()
 				.Title("What would you like to do today?")
@@ -72,9 +72,9 @@ internal class StacksMenu : Menu
 	{
 		Stack stack = new();
 
-		throw new NotImplementedException("Validation function needs to be created yet");
-
-		stack.Name = Input.ValidateInput("Insert the stack's name: ", ValidationType.AnyNonBlank, menuColors, BackOptions.Exit);
+		string dummyName = stack.Name;
+		Input.ValidateInput(ref dummyName, "Insert the stack's name: ", ValidationType.Text, menuColors, BackOptions.Exit);
+		stack.Name = dummyName;
 
 		var dataAccess = new DataAccess();
 		dataAccess.InsertStack(stack);

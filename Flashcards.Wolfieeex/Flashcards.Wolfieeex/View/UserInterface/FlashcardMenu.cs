@@ -72,11 +72,13 @@ internal class FlashcardMenu : Menu
 	{
 		Flashcard flashcard = new();
 
-		throw new NotImplementedException("User input validation is not implemented yet");
-
+		string dummyInput = "";
 		flashcard.StackId = ChooseStack();
-		flashcard.Question = AnsiConsole.Ask<string>(Input.ValidateInput("Insert question: ", ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank));
-		flashcard.Answer = AnsiConsole.Ask<string>(Input.ValidateInput("Insert answer: ", ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank));
+
+		Input.ValidateInput(ref dummyInput, "Insert question: ", ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
+		flashcard.Question = dummyInput;
+		Input.ValidateInput(ref dummyInput, "Insert answer: ", ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
+		flashcard.Answer = dummyInput;
 
 		var dataAccess = new DataAccess();
 		dataAccess.InsertFlashcard(flashcard);
