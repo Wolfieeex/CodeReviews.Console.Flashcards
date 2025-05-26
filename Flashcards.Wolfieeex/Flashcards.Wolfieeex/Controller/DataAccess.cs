@@ -82,7 +82,7 @@ internal class DataAccess
             {
                 connection.Open();
 
-                string selectQuery = "SELECT * FROM stacks";
+                string selectQuery = "SELECT * FROM Stacks";
                 var records = connection.Query<Stack>(selectQuery);
                 return records;
             }
@@ -91,6 +91,26 @@ internal class DataAccess
         {
             Console.WriteLine($"There was a problem while retrieving the stacks: {ex.Message}");
             return new List<Stack>();
+        }
+    }
+
+    internal IEnumerable<Flashcard> GetAllFlashcards(int id)
+    {
+        try
+        {
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                string selectQuery = "SELECT * FROM Flashcards WHERE StackId = @StackId";
+                var records = connection.Query<Flashcard>(selectQuery, new {StackId = id} );
+                return records;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"There was a problem while retrieving your flashcards: {ex.Message}");
+            return new List<Flashcard>();        
         }
     }
 
@@ -126,14 +146,14 @@ internal class DataAccess
 
                 transaction = connection.BeginTransaction();
                 connection.Execute("INSERT INTO Stacks (Name) VALUES (@Name)", stacks, transaction: transaction);
-                connection.Execute("INSERT INTO Flashcards (Question, @Answer, @StackId)", flashcards, transaction: transaction);
+                connection.Execute("INSERT INTO Flashcards VALUES (@Question, @Answer, @StackId)", flashcards, transaction: transaction);
 
                 transaction.Commit();
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"There was a problem while inserting bulk records: {ex.Message}";
+            Console.WriteLine($"There was a problem while inserting bulk records: {ex.Message}");
 
             if (transaction != null)
             {
@@ -160,6 +180,50 @@ internal class DataAccess
         catch (Exception ex)
         {
             Console.WriteLine($"There was a problem while dropping tables: {ex.Message}");
+        }
+    }
+
+    internal void DeleteFlashcard(int id)
+    {
+        try
+        {
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                string deleteQuery = "DELETE FROM Flashcards WHERE Id = @Id";
+
+                int rowsAffected = connection.Execute(deleteQuery, new
+                {
+                    Id = id
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"There was a problem while deleting your flashcard: {ex.Message}");
+        }
+    }
+
+    internal void DeleteStack(int id)
+    {
+        try
+        {
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                string deleteQuery = "DELETE FROM Stacks WHERE Id = @Id";
+
+                int rowsAffected = connection.Execute(deleteQuery, new
+                {
+                    Id = id
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"There was a problem while deleting your stack: {ex.Message}");
         }
     }
 }

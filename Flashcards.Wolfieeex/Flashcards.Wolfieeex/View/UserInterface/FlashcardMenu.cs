@@ -65,7 +65,14 @@ internal class FlashcardMenu : Menu
 
 	private void DeleteFlashcard()
 	{
-		throw new NotImplementedException();
+		var stackId = ChooseStack("Where is the flashcard you want to delete?:");
+		var flashcard = ChooseFlashcard("Choose flashcard you want to delete", stackId);
+
+		if (!AnsiConsole.Confirm("Are you sure?"))
+			return;
+
+		var dataAccess = new DataAccess();
+		dataAccess.DeleteFlashcard(flashcard);
 	}
 
 	private void AddFlashcard()
@@ -73,7 +80,7 @@ internal class FlashcardMenu : Menu
 		Flashcard flashcard = new();
 
 		string dummyInput = "";
-		flashcard.StackId = ChooseStack();
+		flashcard.StackId = ChooseStack("Choose one of your previous stacks:");
 
 		Input.ValidateInput(ref dummyInput, "Insert question: ", ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
 		flashcard.Question = dummyInput;
@@ -84,17 +91,32 @@ internal class FlashcardMenu : Menu
 		dataAccess.InsertFlashcard(flashcard);
 	}
 
-	private static int ChooseStack()
+	private static int ChooseStack(string message)
 	{
 		var dataAccess = new DataAccess();
 		var stacks = dataAccess.GetAllStacks();
 
 		var stacksArray = stacks.Select(x => x.Name).ToArray();
 		var option = AnsiConsole.Prompt(new SelectionPrompt<string>()
-			.Title("Choose one of your previous stacks:")
+			.Title(message)
 			.AddChoices(stacksArray));
 
 		return stacks.Single(x => x.Name == option).Id;
+	}
+
+	private static int ChooseFlashcard(string message, int stackId)
+	{
+		var dataAccess = new DataAccess();
+		var flashcards = dataAccess.GetAllFlashcards(stackId);
+
+		var flashcardsArray = flashcards.Select(x => x.Question).ToArray();
+		var option = AnsiConsole.Prompt(new SelectionPrompt<string>()
+			.Title(message)
+			.AddChoices(flashcardsArray));
+
+		var flashcardId = flashcards.Single(x => x.Question == option).Id;
+
+		return flashcardId;
 	}
 
 	private void ViewFlashcards()

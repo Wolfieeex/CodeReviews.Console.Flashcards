@@ -65,7 +65,13 @@ internal class StacksMenu : Menu
 
 	private void DeleteStack()
 	{
-		throw new NotImplementedException();
+		var id = ChooseStack("Choose stack to delete:");
+
+		if (!AnsiConsole.Confirm("Are you sure?"))
+			return;
+
+		var dataAccess = new DataAccess();
+		dataAccess.DeleteStack(id);
 	}
 
 	private void AddStack()
@@ -85,5 +91,16 @@ internal class StacksMenu : Menu
 		throw new NotImplementedException();
 	}
 
+	private static int ChooseStack(string message)
+	{
+		var dataAccess = new DataAccess();
+		var stacks = dataAccess.GetAllStacks();
 
+		var stacksArray = stacks.Select(x => x.Name).ToArray();
+		var option = AnsiConsole.Prompt(new SelectionPrompt<string>()
+			.Title(message)
+			.AddChoices(stacksArray));
+
+		return stacks.Single(x => x.Name == option).Id;
+	}
 }
