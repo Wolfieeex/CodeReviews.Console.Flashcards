@@ -60,8 +60,17 @@ internal class StacksMenu : Menu
 
 	private void UpdateStack()
 	{
-		throw new NotImplementedException();
-	}
+		var stack = new Stack();
+
+		stack.Id = ChooseStack("Choose stack you want to update: ");
+
+		string tempName = stack.Name;
+		Input.ValidateInput(ref tempName, "Insert a new name of your stack: ", ValidationType.AnyNonBlank, menuColors, BackOptions.Exit);
+		stack.Name = tempName;
+
+		var dataAccess = new DataAccess();
+		dataAccess.UpdateStack(stack);
+	}	
 
 	private void DeleteStack()
 	{

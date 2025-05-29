@@ -161,7 +161,6 @@ internal class DataAccess
             }
         }
     }
-
     internal void DeleteTables()
     {
         try
@@ -224,6 +223,45 @@ internal class DataAccess
         catch (Exception ex)
         {
             Console.WriteLine($"There was a problem while deleting your stack: {ex.Message}");
+        }
+    }
+
+    internal void UpdateStack(Stack stack)
+    {
+        using (var connection = new SqlConnection(ConnectionString))
+        {
+            connection.Open();
+
+            string updateQuery = @" 
+               UPDATE stacks 
+               SET Name = @Name
+               WHERE Id = @Id";
+
+            connection.Execute(updateQuery, new { stack.Name, stack.Id} );
+        }
+    }
+
+    internal void UpdateFlashcard(int flashcardId, Dictionary<string, object> updateProperties)
+    {
+        using (var connection = new SqlConnection(ConnectionString))
+        {
+            connection.Open();
+
+            string updateQuery = "UPDATE flashcards SET";
+            var parameters = new DynamicParameters();
+
+            foreach (var kvp in updateProperties)
+            {
+                updateQuery += $"{kvp.Key} = @{kvp.Key}, ";
+                parameters.Add(kvp.Key, kvp.Value);
+            }
+
+            updateQuery = updateQuery.TrimEnd(',', ' ');
+
+            updateQuery += " WHERE Id = @Id";
+            parameters.Add("Id", flashcardId);
+
+            connection.Execute(updateQuery, parameters);
         }
     }
 }

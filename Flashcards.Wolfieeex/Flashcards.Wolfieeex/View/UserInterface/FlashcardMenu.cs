@@ -58,9 +58,30 @@ internal class FlashcardMenu : Menu
 		}
 	}
 
+	private string GetQuestion()
+	{
+		string tempQuestion = null;
+		Input.ValidateInput(ref tempQuestion, "Insert flashcard's question: ", ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
+
+		return tempQuestion;
+	}
+
+	private string GetAnswer()
+	{
+		string tempAnswer = null;
+		Input.ValidateInput(ref tempAnswer, "Insert flashcard's answer: ", ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
+
+		return tempAnswer;
+	}
+
 	private void UpdateFlashcard()
 	{
-		throw new NotImplementedException();
+		var stackId = ChooseStack("Choose the stack where the flashcard is: ");
+		var flashcardId = ChooseFlashcard("Choose flashcard to update", stackId);
+
+		var propertiesToUpdate = new Dictionary<string, object>();
+
+		if (Ansi)
 	}
 
 	private void DeleteFlashcard()
@@ -82,10 +103,8 @@ internal class FlashcardMenu : Menu
 		string dummyInput = "";
 		flashcard.StackId = ChooseStack("Choose one of your previous stacks:");
 
-		Input.ValidateInput(ref dummyInput, "Insert question: ", ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
-		flashcard.Question = dummyInput;
-		Input.ValidateInput(ref dummyInput, "Insert answer: ", ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
-		flashcard.Answer = dummyInput;
+		flashcard.Question = GetQuestion();
+		flashcard.Answer = GetAnswer();
 
 		var dataAccess = new DataAccess();
 		dataAccess.InsertFlashcard(flashcard);
