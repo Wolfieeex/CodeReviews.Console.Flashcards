@@ -11,7 +11,7 @@ internal class StacksMenu : Menu
 {
 	public StacksMenu() : base(Color.Green3_1) { }
 
-	public override void DisplayMenu()
+	protected override void DisplayMenu()
 	{
 		bool IsMenuRunning = true;
 		while (IsMenuRunning)
@@ -27,7 +27,9 @@ internal class StacksMenu : Menu
 					StacksChoices.UpdateStack,
 					StacksChoices.DeleteStack,
 					StacksChoices.ReturnToMainMenu)
-				.UseConverter(x => Regex.Replace(x.ToString(), @"(.)([A-Z]{1})", @"$1 $2"))
+				.HighlightStyle(style)
+				.UseConverter(s => GetDisplayName(s))
+				.WrapAround()
 				);
 
 			try
@@ -100,6 +102,7 @@ internal class StacksMenu : Menu
 		throw new NotImplementedException();
 	}
 
+	/// <returns>Returns -1 if user returns to previous menu without selection.</returns>
 	private static int ChooseStack(string message)
 	{
 		var dataAccess = new DataAccess();
@@ -110,6 +113,6 @@ internal class StacksMenu : Menu
 			.Title(message)
 			.AddChoices(stacksArray));
 
-		return stacks.Single(x => x.Name == option).Id;
+		return stacks.Single(x => x.Name == option)?.Id ?? -1;
 	}
 }

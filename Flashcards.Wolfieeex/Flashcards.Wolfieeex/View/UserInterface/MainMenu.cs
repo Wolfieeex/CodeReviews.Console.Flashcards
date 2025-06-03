@@ -1,5 +1,4 @@
 ﻿using Spectre.Console;
-using System.Text.RegularExpressions;
 using static Flashcards.Wolfieeex.Model.SelectionEnums;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
@@ -8,7 +7,7 @@ public class MainMenu : Menu
 {
 	public MainMenu() : base(Color.Purple3) { }
 
-	public override void DisplayMenu()
+	protected override void DisplayMenu()
 	{
 		Console.Clear();
 
@@ -27,18 +26,18 @@ public class MainMenu : Menu
 					MainMenuChoices.ManageStacks,
 					MainMenuChoices.ManageFlashcards,
 					MainMenuChoices.Quit)
-				.UseConverter(x => Regex.Replace(x.ToString(), @"(.)([A-Z]{1})", @"$1 $2"))
+				.UseConverter(s => GetDisplayName(s))
+				.HighlightStyle(style)
+				.WrapAround()
 				);
 
 			switch (userChoice)
 			{
 				case MainMenuChoices.ManageStacks:
 					StacksMenu stacksMenu = new StacksMenu();
-					stacksMenu.DisplayMenu();
 					break;
 				case MainMenuChoices.ManageFlashcards:
 					FlashcardMenu flashcardMenu = new FlashcardMenu();
-					flashcardMenu.DisplayMenu();
 					break;
 				case MainMenuChoices.Quit:
 					System.Console.Clear();

@@ -1,6 +1,7 @@
 ﻿using Flashcards.Wolfieeex.Controller;
 using Flashcards.Wolfieeex.Model;
 using Spectre.Console;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 using static Flashcards.Wolfieeex.Model.InputValidationEnums;
 using static Flashcards.Wolfieeex.Model.SelectionEnums;
@@ -11,7 +12,7 @@ internal class FlashcardMenu : Menu
 {
 	public FlashcardMenu() : base(Color.Orange4) { }
 
-	public override void DisplayMenu()
+	protected override void DisplayMenu()
 	{
 		Console.Clear();
 
@@ -27,7 +28,9 @@ internal class FlashcardMenu : Menu
 					FlashcardChoices.UpdateFlashcard,
 					FlashcardChoices.DeleteFlashcard,
 					FlashcardChoices.ReturnToMainMenu)
-				.UseConverter(x => Regex.Replace(x.ToString(), @"(.)([A-Z]{1})", @"$1 $2"))
+				.UseConverter(s => GetDisplayName(s))
+				.HighlightStyle(style)
+				.WrapAround()
 				);
 
 			try
@@ -81,7 +84,7 @@ internal class FlashcardMenu : Menu
 
 		var propertiesToUpdate = new Dictionary<string, object>();
 
-		if (Ansi)
+		//if (Ansi)
 	}
 
 	private void DeleteFlashcard()
@@ -123,6 +126,7 @@ internal class FlashcardMenu : Menu
 		return stacks.Single(x => x.Name == option).Id;
 	}
 
+	/// <returns>Returns -1 if user returns to previous menu without selection.</returns>
 	private static int ChooseFlashcard(string message, int stackId)
 	{
 		var dataAccess = new DataAccess();
@@ -133,9 +137,7 @@ internal class FlashcardMenu : Menu
 			.Title(message)
 			.AddChoices(flashcardsArray));
 
-		var flashcardId = flashcards.Single(x => x.Question == option).Id;
-
-		return flashcardId;
+		return flashcards.Single(x => x.Question == option)?.Id ?? -1;
 	}
 
 	private void ViewFlashcards()

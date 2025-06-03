@@ -6,4 +6,3 @@ DataAccess.DeleteTables();
 DataAccess.CreateTables();
 SeedData.SeedRecords();
 MainMenu mainMenu = new();
-mainMenu.DisplayMenu();

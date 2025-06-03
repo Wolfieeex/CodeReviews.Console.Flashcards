@@ -4,21 +4,42 @@ namespace Flashcards.Wolfieeex.View.UserInterface;
 
 internal class MulitInputMenu : Menu
 {
-	private Type _selectionType;
+	private readonly Type _selectionType;
+	private readonly string _title;
 
-	MulitInputMenu(Color color, Type EnumSelectionType) : base(color)
+	private Dictionary<Enum, string> inputs;
+
+	MulitInputMenu(Color color, Type EnumSelectionType, string title) : base(color)
 	{
 		_selectionType = EnumSelectionType;
+		_title = title;
 	}
 
-	public override void DisplayMenu()
+	protected override void DisplayMenu()
 	{
-
-
-		bool menuIsRunning = true;
-		while (menuIsRunning)
+		try
 		{
-			Console.Clear();
+			if (!_selectionType.IsEnum)
+				throw new ArgumentException("EnumSelectionType parameter must be of type Enum.");
+
+			List<string> menuOptions = Enum.GetNames(_selectionType).ToList();
+
+			bool menuIsRunning = true;
+			while (menuIsRunning)
+			{
+				Console.Clear();
+
+				string userInput = AnsiConsole.Prompt(new SelectionPrompt<string>()
+					.Title(_title)
+					.AddChoices(menuOptions)
+					.HighlightStyle(style)
+					.WrapAround()
+					);
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"There was an error while running Multi Input Menu with {_selectionType} type: {ex.Message}");
 		}
 	}
 }
