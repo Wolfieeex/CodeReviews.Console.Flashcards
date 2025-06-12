@@ -42,11 +42,9 @@ public abstract class Menu
 	{
 		MenuColor = color;
 		style = new Style(decoration: Decoration.RapidBlink, foreground: menuColors.UserInputColor);
-
-		DisplayMenu();
 	}
 
-	protected abstract void DisplayMenu();
+	public abstract void DisplayMenu();
 
 	protected string GetDisplayName(Enum value)
 	{

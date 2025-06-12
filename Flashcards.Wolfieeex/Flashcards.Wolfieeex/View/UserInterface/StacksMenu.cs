@@ -11,22 +11,19 @@ internal class StacksMenu : Menu
 {
 	public StacksMenu() : base(Color.Green3_1) { }
 
-	protected override void DisplayMenu()
+	public override void DisplayMenu()
 	{
 		bool IsMenuRunning = true;
 		while (IsMenuRunning)
 		{
 			Console.Clear();
 
+			var menuSelections = Enum.GetValues(typeof(StacksChoices)).Cast<StacksChoices>();
+
 			var userChoice = AnsiConsole.Prompt(
 				new SelectionPrompt<StacksChoices>()
 				.Title("What would you like to do today?")
-				.AddChoices(
-					StacksChoices.ViewStacks,
-					StacksChoices.AddStack,
-					StacksChoices.UpdateStack,
-					StacksChoices.DeleteStack,
-					StacksChoices.ReturnToMainMenu)
+				.AddChoices(menuSelections)
 				.HighlightStyle(style)
 				.UseConverter(s => GetDisplayName(s))
 				.WrapAround()
@@ -64,7 +61,11 @@ internal class StacksMenu : Menu
 	{
 		var stack = new Stack();
 
-		stack.Id = ChooseStack("Choose stack you want to update: ");
+		var id = ChooseStack("Choose stack you want to update: ");
+		if (id == -1)
+			return;
+
+		stack.Id = id;
 
 		string tempName = stack.Name;
 		Input.ValidateInput(ref tempName, "Insert a new name of your stack: ", ValidationType.AnyNonBlank, menuColors, BackOptions.Exit);
@@ -77,6 +78,8 @@ internal class StacksMenu : Menu
 	private void DeleteStack()
 	{
 		var id = ChooseStack("Choose stack to delete:");
+		if (id == -1)
+			return;
 
 		if (!AnsiConsole.Confirm("Are you sure?"))
 			return;
@@ -111,7 +114,9 @@ internal class StacksMenu : Menu
 		var stacksArray = stacks.Select(x => x.Name).ToArray();
 		var option = AnsiConsole.Prompt(new SelectionPrompt<string>()
 			.Title(message)
-			.AddChoices(stacksArray));
+			.AddChoices("[grey]Return to previous menu[/]")
+			.AddChoices(stacksArray)
+			);
 
 		return stacks.Single(x => x.Name == option)?.Id ?? -1;
 	}

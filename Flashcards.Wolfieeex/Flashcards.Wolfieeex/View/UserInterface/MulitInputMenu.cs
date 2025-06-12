@@ -1,45 +1,53 @@
 ﻿using Spectre.Console;
+using System.Collections;
+using System.Collections.Immutable;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 
-internal class MulitInputMenu : Menu
+abstract public class MulitInputMenu : Menu
 {
-	private readonly Type _selectionType;
-	private readonly string _title;
+	protected Type _selectionType;
 
-	private Dictionary<Enum, string> inputs;
+	protected Dictionary<Enum, string> inputs = new Dictionary<Enum, string>();
 
-	MulitInputMenu(Color color, Type EnumSelectionType, string title) : base(color)
-	{
-		_selectionType = EnumSelectionType;
-		_title = title;
-	}
+	public MulitInputMenu(Color color) : base(color) {}
 
-	protected override void DisplayMenu()
+	public sealed override void DisplayMenu()
 	{
 		try
 		{
 			if (!_selectionType.IsEnum)
-				throw new ArgumentException("EnumSelectionType parameter must be of type Enum.");
+				throw new ArgumentException("\"Enum Selection Type\" parameter must be of type Enum. (Also, make sure you assign" +
+					"a value to it while instantiating a new menu).");
 
-			List<string> menuOptions = Enum.GetNames(_selectionType).ToList();
-
-			bool menuIsRunning = true;
-			while (menuIsRunning)
-			{
-				Console.Clear();
-
-				string userInput = AnsiConsole.Prompt(new SelectionPrompt<string>()
-					.Title(_title)
-					.AddChoices(menuOptions)
-					.HighlightStyle(style)
-					.WrapAround()
-					);
-			}
+			MenuRunningLoop();
 		}
 		catch (Exception ex)
 		{
 			Console.WriteLine($"There was an error while running Multi Input Menu with {_selectionType} type: {ex.Message}");
 		}
+	}
+
+	abstract public void MenuRunningLoop();
+
+	protected IEnumerable<Enum> GenerateOptions()
+	{
+		List<Enum> menuSelections = Enum.GetValues(_selectionType).Cast<Enum>().ToList();
+
+		foreach (var enumVal in _selectionType.GetEnumValues())
+		{
+			// Check keys and values for 2 reasons: 1) Should main option be enabled. 2) To display a current option.
+		}
+
+		return menuSelections.ToImmutableList();
+	}
+
+	protected string SmartOptionConverter(Enum option)
+	{
+		if (inputs.ContainsKey(option))
+			return GetDisplayName(option) + ": " + inputs[option].ToString();
+
+		else
+			return GetDisplayName(option);
 	}
 }

@@ -7,7 +7,7 @@ public class MainMenu : Menu
 {
 	public MainMenu() : base(Color.Purple3) { }
 
-	protected override void DisplayMenu()
+	public override void DisplayMenu()
 	{
 		Console.Clear();
 
@@ -19,13 +19,12 @@ public class MainMenu : Menu
 				.Centered()
 				.Color(Color.CadetBlue));
 
+			var menuSelections = Enum.GetValues(typeof(MainMenuChoices)).Cast<MainMenuChoices>();
+
 			var userChoice = AnsiConsole.Prompt(
 				new SelectionPrompt<MainMenuChoices>()
 				.Title("Welcome to flashcards! Make your selection:")
-				.AddChoices(
-					MainMenuChoices.ManageStacks,
-					MainMenuChoices.ManageFlashcards,
-					MainMenuChoices.Quit)
+				.AddChoices(menuSelections)
 				.UseConverter(s => GetDisplayName(s))
 				.HighlightStyle(style)
 				.WrapAround()
@@ -35,9 +34,11 @@ public class MainMenu : Menu
 			{
 				case MainMenuChoices.ManageStacks:
 					StacksMenu stacksMenu = new StacksMenu();
+					stacksMenu.DisplayMenu();
 					break;
 				case MainMenuChoices.ManageFlashcards:
 					FlashcardMenu flashcardMenu = new FlashcardMenu();
+					flashcardMenu.DisplayMenu();
 					break;
 				case MainMenuChoices.Quit:
 					System.Console.Clear();

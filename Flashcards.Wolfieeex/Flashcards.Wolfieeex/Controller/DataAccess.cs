@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Flashcards.Wolfieeex.Model;
 
+
 internal class DataAccess
 {
     IConfiguration configuration = new ConfigurationBuilder()
