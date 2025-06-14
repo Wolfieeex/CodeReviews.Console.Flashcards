@@ -61,25 +61,14 @@ internal class FlashcardMenu : Menu
 		}
 	}
 
-	private string GetQuestion()
-	{
-		string tempQuestion = null;
-		Input.ValidateInput(ref tempQuestion, "Insert flashcard's question: ", ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
-
-		return tempQuestion;
-	}
-
-	private string GetAnswer()
-	{
-		string tempAnswer = null;
-		Input.ValidateInput(ref tempAnswer, "Insert flashcard's answer: ", ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
-
-		return tempAnswer;
-	}
+	
 
 	private void UpdateFlashcard()
 	{
 		var stackId = ChooseStack("Choose the stack where the flashcard is: ");
+
+		AddFlashcardMenu addFlashcardMenu = new(menuColors.UserInputColor);
+		addFlashcardMenu.DisplayMenu();
 
 		/*var flashcardId = ChooseFlashcard("Choose flashcard to update", stackId);
 
@@ -112,23 +101,19 @@ internal class FlashcardMenu : Menu
 
 	private void AddFlashcard()
 	{
-		Flashcard flashcard = new();
-
 		string dummyInput = "";
 
 		AddFlashcardMenu addFlashcardMenu = new(menuColors.UserInputColor);
-		addFlashcardMenu.DisplayMenu();	
+		addFlashcardMenu.DisplayMenu();
 
-		/*flashcard.StackId = ChooseStack("Choose one of your previous stacks:");
-
-		flashcard.Question = GetQuestion();
-		flashcard.Answer = GetAnswer();*/
+		if (addFlashcardMenu.Flashcard == null)
+			return;
 
 		var dataAccess = new DataAccess();
-		dataAccess.InsertFlashcard(flashcard);
+		dataAccess.InsertFlashcard(addFlashcardMenu.Flashcard);
 	}
 
-	private static int ChooseStack(string message)
+	public static int ChooseStack(string message)
 	{
 		var dataAccess = new DataAccess();
 		var stacks = dataAccess.GetAllStacks();
@@ -139,11 +124,11 @@ internal class FlashcardMenu : Menu
 			.AddChoices("[grey]Return to previous menu[/]")
 			.AddChoices(stacksArray));
 
-		return stacks.Single(x => x.Name == option)?.Id ?? -1;
+		return stacks.SingleOrDefault(x => x.Name == option)?.Id ?? -1;
 	}
 
 	/// <returns>Returns -1 if user returns to previous menu without selection.</returns>
-	private static int ChooseFlashcard(string message, int stackId)
+	public static int ChooseFlashcard(string message, int stackId)
 	{
 		var dataAccess = new DataAccess();
 		var flashcards = dataAccess.GetAllFlashcards(stackId);
@@ -155,8 +140,7 @@ internal class FlashcardMenu : Menu
 			.AddChoices(flashcardsArray)
 			);
 			
-
-		return flashcards.Single(x => x.Question == option)?.Id ?? -1;
+		return flashcards.SingleOrDefault(x => x.Question == option)?.Id ?? -1;
 	}
 
 	private void ViewFlashcards()

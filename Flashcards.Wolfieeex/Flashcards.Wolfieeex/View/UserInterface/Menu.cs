@@ -1,5 +1,6 @@
 ﻿namespace Flashcards.Wolfieeex.View.UserInterface;
 
+using Flashcards.Wolfieeex.Model;
 using Spectre.Console;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -76,5 +77,21 @@ public abstract class Menu
 				return displayAttribute.Description;
 		}
 		return value.ToString();
+	}
+
+	protected SpecialLabels GetSpecialLabel(Enum value)
+	{
+		if (value == null)
+			throw new ArgumentNullException($"Your \"Get Description\" argument was null.");
+
+		var memberInfo = value.GetType().GetMember(value.ToString()).FirstOrDefault();
+		if (memberInfo != null)
+		{
+			var displayAttribute = memberInfo.GetCustomAttribute<EnumLabelSpecialLabel>(false);
+
+			if (displayAttribute != null)
+				return displayAttribute.Label;
+		}
+		return SpecialLabels.None;
 	}
 }

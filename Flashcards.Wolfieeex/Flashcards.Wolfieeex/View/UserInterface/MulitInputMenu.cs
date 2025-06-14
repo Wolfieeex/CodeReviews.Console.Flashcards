@@ -28,9 +28,9 @@ abstract public class MulitInputMenu : Menu
 		}
 	}
 
-	abstract public void MenuRunningLoop();
+	abstract protected void MenuRunningLoop();
 
-	protected IEnumerable<Enum> GenerateOptions()
+	protected virtual IEnumerable<Enum> GenerateOptions()
 	{
 		List<Enum> menuSelections = Enum.GetValues(_selectionType).Cast<Enum>().ToList();
 

@@ -118,6 +118,6 @@ internal class StacksMenu : Menu
 			.AddChoices(stacksArray)
 			);
 
-		return stacks.Single(x => x.Name == option)?.Id ?? -1;
+		return stacks.SingleOrDefault(x => x.Name == option)?.Id ?? -1;
 	}
 }
