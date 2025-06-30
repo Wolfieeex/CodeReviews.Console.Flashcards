@@ -1,8 +1,8 @@
 ﻿using Flashcards.Wolfieeex.Model;
 using Spectre.Console;
-using System.Collections;
 using System.Collections.Immutable;
 using static Flashcards.Wolfieeex.Model.InputValidationEnums;
+using static Flashcards.Wolfieeex.Model.MultiInputMenuEnums;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 
@@ -71,15 +71,25 @@ abstract public class MulitInputMenu : Menu
 
 	protected string SmartOptionConverter(Enum option)
 	{
+		DataAccess dataAccess = new DataAccess();
+		
 		if (inputs.ContainsKey(option))
-			return GetDisplayName(option) + ": [#" + menuColors.Important2Color.ToHex() + "]" + inputs[option].ToString() + "[/]";
-
+			if (!int.TryParse(inputs[option], out _))
+			{
+				return GetDisplayName(option) + ": [#" + menuColors.Important2Color.ToHex() + "]" + inputs[option].ToString() + "[/]";
+			}
+			else 
+			{
+				if (Enum.TryParse<InsertFlashcardSelection>(option.ToString(), out _))
+				{
+					return (GetDisplayName(option) + ": [#" + menuColors.Important2Color.ToHex() + "]" + dataAccess.GetStackName(int.Parse(inputs[option])) + "[/]").TrimEnd(':', ' ');
+				}
+				else
+				{
+					return GetDisplayName(option);
+				}
+			}
 		else
 			return GetDisplayName(option);
-	}
-
-	protected void ProcessAnswer(Enum input, string answer)
-	{
-		
 	}
 }

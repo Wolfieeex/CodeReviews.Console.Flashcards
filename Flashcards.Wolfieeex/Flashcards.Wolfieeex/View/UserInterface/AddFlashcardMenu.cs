@@ -49,8 +49,16 @@ internal class AddFlashcardMenu : MulitInputMenu
 					}
 					else if (tempAnswer != null)
 					{
-						inputs.Add(InsertFlashcardSelection.ChooseAnswer, tempAnswer);
-						Flashcard.Answer = tempAnswer;
+						if (inputs.ContainsKey(InsertFlashcardSelection.ChooseAnswer))
+						{
+							inputs[InsertFlashcardSelection.ChooseAnswer] = tempAnswer;
+							Flashcard.Answer = tempAnswer;
+						}
+						else
+						{
+							inputs.Add(InsertFlashcardSelection.ChooseAnswer, tempAnswer);
+							Flashcard.Answer = tempAnswer;
+						}
 					}
 					break;
 
@@ -64,15 +72,34 @@ internal class AddFlashcardMenu : MulitInputMenu
 					}
 					else if (tempQuestion != null)
 					{
-						inputs.Add(InsertFlashcardSelection.ChooseQuestion, tempQuestion);
-						Flashcard.Question = tempQuestion;
+						if (inputs.ContainsKey(InsertFlashcardSelection.ChooseQuestion))
+						{
+							inputs[InsertFlashcardSelection.ChooseQuestion] = tempQuestion;
+							Flashcard.Question = tempQuestion;
+						}
+						else
+						{
+							inputs.Add(InsertFlashcardSelection.ChooseQuestion, tempQuestion);
+							Flashcard.Question = tempQuestion;
+						}
 					}
 					break;
 
 				case InsertFlashcardSelection.ChooseStack:
 					int tempId = FlashcardMenu.ChooseStack(GetDescription(InsertFlashcardSelection.ChooseStack));
-					if (tempId != 0)
-						inputs.Add(InsertFlashcardSelection.ChooseStack, //Flashcard.StackId.ToString());
+					if (tempId != -1)
+					{
+						if (inputs.ContainsKey(InsertFlashcardSelection.ChooseStack))
+						{
+							inputs[InsertFlashcardSelection.ChooseStack] = tempId.ToString();
+							Flashcard.StackId = tempId;
+						}
+						else
+						{
+							inputs.Add(InsertFlashcardSelection.ChooseStack, tempId.ToString());
+							Flashcard.StackId = tempId;
+						}
+					}
 					break;
 
 				default:

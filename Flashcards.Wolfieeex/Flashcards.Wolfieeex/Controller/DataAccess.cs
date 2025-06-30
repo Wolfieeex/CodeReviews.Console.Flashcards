@@ -276,4 +276,23 @@ internal class DataAccess
             return connection.QueryFirstOrDefault<Flashcard>(query, new { StackId = stackId, FlashcardId = flashcardId } ).Question;
         }
     }
+
+	internal string GetStackName(int stackId)
+	{
+		using (var connection = new SqlConnection(ConnectionString))
+		{
+            if (stackId == null || stackId == -1)
+            {
+                return null;
+            }
+
+			connection.Open();
+			string query = $"SELECT * FROM Stacks WHERE Id = @StackId";
+
+			return connection.QueryFirstOrDefault<Stack>(query, new
+			{
+				StackId = stackId,
+			}).Name;
+		}
+	}
 }

@@ -136,6 +136,12 @@ internal class FlashcardMenu : Menu
 
 		var dataAccess = new DataAccess();
 		dataAccess.InsertFlashcard(addFlashcardMenu.Flashcard);
+
+		Console.Clear();
+		AnsiConsole.Markup($"Your new Flashcard [#{menuColors.Important3Color.ToHex()}]\"{addFlashcardMenu.Flashcard.Question}\"[/] " +
+			$"in Stack [#{menuColors.Important2Color.ToHex()}]\"{dataAccess.GetStackName(addFlashcardMenu.Flashcard.StackId)}\"[/]" +
+			$" has been added! Press any button to continue: ");
+		Console.ReadKey();
 	}
 
 	public static int ChooseStack(string message)
