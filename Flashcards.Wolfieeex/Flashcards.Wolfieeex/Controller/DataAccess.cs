@@ -265,4 +265,15 @@ internal class DataAccess
             connection.Execute(updateQuery, parameters);
         }
     }
+
+    internal string GetFlashcardName(int stackId, int flashcardId)
+    {
+        using (var connection = new SqlConnection(ConnectionString))
+        {
+            connection.Open();
+            string query = $"SELECT * FROM Flashcards WHERE StackId = @StackId AND Id = @FlashcardId";
+
+            return connection.QueryFirstOrDefault<Flashcard>(query, new { StackId = stackId, FlashcardId = flashcardId } ).Question;
+        }
+    }
 }

@@ -1,6 +1,8 @@
-﻿using Spectre.Console;
+﻿using Flashcards.Wolfieeex.Model;
+using Spectre.Console;
 using System.Collections;
 using System.Collections.Immutable;
+using static Flashcards.Wolfieeex.Model.InputValidationEnums;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 
@@ -28,26 +30,56 @@ abstract public class MulitInputMenu : Menu
 		}
 	}
 
-	abstract protected void MenuRunningLoop();
+	private void AssignNewInput(Enum enumValue, ValidationType validation, BackOptions backSetting)
+	{
+
+	}
 
 	protected virtual IEnumerable<Enum> GenerateOptions()
 	{
 		List<Enum> menuSelections = Enum.GetValues(_selectionType).Cast<Enum>().ToList();
+		List<Enum> generatedOptions = new();
 
-		foreach (var enumVal in _selectionType.GetEnumValues())
+		bool displayConfirmation = true;
+
+		foreach (Enum enumVal in _selectionType.GetEnumValues())
 		{
-			// Check keys and values for 2 reasons: 1) Should main option be enabled. 2) To display a current option.
+			if (GetSpecialLabel(enumVal) == SpecialLabels.NonOptional)
+				if (!inputs.ContainsKey(enumVal))
+					displayConfirmation = false;
 		}
 
-		return menuSelections.ToImmutableList();
+		foreach (Enum enumVal in _selectionType.GetEnumValues())
+		{
+			if (GetSpecialLabel(enumVal) == SpecialLabels.Confirm)
+			{
+				if (displayConfirmation)
+				{
+					generatedOptions.Add(enumVal);
+				}
+			}
+			else if (GetSpecialLabel(enumVal) != SpecialLabels.Confirm)
+			{
+				generatedOptions.Add(enumVal);
+			}
+		}
+
+		return generatedOptions.ToImmutableList();
 	}
+
+	abstract protected void MenuRunningLoop();
 
 	protected string SmartOptionConverter(Enum option)
 	{
 		if (inputs.ContainsKey(option))
-			return GetDisplayName(option) + ": " + inputs[option].ToString();
+			return GetDisplayName(option) + ": [#" + menuColors.Important2Color.ToHex() + "]" + inputs[option].ToString() + "[/]";
 
 		else
 			return GetDisplayName(option);
+	}
+
+	protected void ProcessAnswer(Enum input, string answer)
+	{
+		
 	}
 }

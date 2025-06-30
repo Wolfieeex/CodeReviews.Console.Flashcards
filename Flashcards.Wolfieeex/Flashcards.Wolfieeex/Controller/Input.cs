@@ -83,7 +83,7 @@ internal class Input
 			}
 			else
 			{
-				AnsiConsole.Write(new Markup("Your input cannot be empty/blank. Try again.\n\n", style: new Style(foreground: menuColors.NegativeColor)));
+				AnsiConsole.Write(new Markup("Your input cannot be empty or blank. Try again.\n\n", style: new Style(foreground: menuColors.NegativeColor)));
 				continue;
 			}
 

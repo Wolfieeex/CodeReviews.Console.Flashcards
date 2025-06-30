@@ -1,10 +1,5 @@
 ﻿using Flashcards.Wolfieeex.Controller;
-using Flashcards.Wolfieeex.Model;
 using Spectre.Console;
-using System.ComponentModel;
-using System.Text.RegularExpressions;
-using static Flashcards.Wolfieeex.Model.InputValidationEnums;
-using static Flashcards.Wolfieeex.Model.MultiInputMenuEnums;
 using static Flashcards.Wolfieeex.Model.SelectionEnums;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
@@ -79,23 +74,53 @@ internal class FlashcardMenu : Menu
 
 	private void DeleteFlashcard()
 	{
-		bool menuWhile = true;
-		while (menuWhile)
+		bool mainDeleteMenu = true;
+		while (mainDeleteMenu)
 		{
 			var stackId = ChooseStack("Where is the flashcard you want to delete?:");
 			if (stackId == -1)
+			{
+				Console.Clear();
 				return;
+			}
 
-			var flashcard = ChooseFlashcard("Choose flashcard you want to delete", stackId);
-			if (flashcard == -1)
-				continue;
+			bool stackSelectedMenu = true;
+			while (stackSelectedMenu)
+			{
+				var flashcard = ChooseFlashcard("Choose flashcard you want to delete", stackId);
+				if (flashcard == -1)
+				{
+					stackSelectedMenu = false;
+					Console.Clear();
+					continue;
+				}
 
-			if (!AnsiConsole.Confirm("Are you sure?"))
-				continue;
+				bool flashcardSelectedMenu = true;
+				while (flashcardSelectedMenu)
+				{
+					if (!AnsiConsole.Confirm("Are you sure?"))
+					{
+						flashcardSelectedMenu = false;
+						Console.Clear();
+						continue;
+					}
 
-			var dataAccess = new DataAccess();
-			dataAccess.DeleteFlashcard(flashcard);
-			menuWhile = false;
+					var dataAccess = new DataAccess();
+
+					string flashcardName = dataAccess.GetFlashcardName(stackId, flashcard);
+
+					dataAccess.DeleteFlashcard(flashcard);
+
+					flashcardSelectedMenu = false;
+					stackSelectedMenu = false;
+					mainDeleteMenu = false;
+					Console.Clear();
+
+					AnsiConsole.Markup($"Flashcard [#{menuColors.NegativeColor.ToHex()}]\"{flashcardName}\"[/] was deleted successfully! Press any button to continue: ");
+					Console.ReadKey();
+					Console.Clear();
+				}
+			}
 		}
 	}
 

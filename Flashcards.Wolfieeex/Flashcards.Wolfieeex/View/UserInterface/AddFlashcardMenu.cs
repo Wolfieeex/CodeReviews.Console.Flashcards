@@ -8,7 +8,7 @@ namespace Flashcards.Wolfieeex.View.UserInterface;
 
 internal class AddFlashcardMenu : MulitInputMenu
 {
-	public Flashcard Flashcard { get; private set; }
+	public Flashcard Flashcard { get; private set; } = new();
 
 	public AddFlashcardMenu(Color color) : base(color)
 	{
@@ -34,27 +34,52 @@ internal class AddFlashcardMenu : MulitInputMenu
 			{
 				case InsertFlashcardSelection.Confirm:
 					return;
-					break;
+
 				case InsertFlashcardSelection.ReturnToPreviousMenu:
 					Flashcard = null;
 					return;
-					break;
+
 				case InsertFlashcardSelection.ChooseAnswer:
 					string tempAnswer = null;
 					Input.ValidateInput(ref tempAnswer, GetDescription(InsertFlashcardSelection.ChooseAnswer), ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
-					Flashcard.Answer = tempAnswer;
+					if (tempAnswer == "")
+					{
+						inputs.Remove(InsertFlashcardSelection.ChooseAnswer);
+						Flashcard.Answer = null;
+					}
+					else if (tempAnswer != null)
+					{
+						inputs.Add(InsertFlashcardSelection.ChooseAnswer, tempAnswer);
+						Flashcard.Answer = tempAnswer;
+					}
 					break;
+
 				case InsertFlashcardSelection.ChooseQuestion:
 					string tempQuestion = null;
 					Input.ValidateInput(ref tempQuestion, GetDescription(InsertFlashcardSelection.ChooseQuestion), ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
-					Flashcard.Question = tempQuestion;
+					if (tempQuestion == "")
+					{
+						inputs.Remove(InsertFlashcardSelection.ChooseQuestion);
+						Flashcard.Question = null;
+					}
+					else if (tempQuestion != null)
+					{
+						inputs.Add(InsertFlashcardSelection.ChooseQuestion, tempQuestion);
+						Flashcard.Question = tempQuestion;
+					}
 					break;
+
 				case InsertFlashcardSelection.ChooseStack:
-					Flashcard.StackId = FlashcardMenu.ChooseStack(GetDescription(InsertFlashcardSelection.ChooseStack));
+					int tempId = FlashcardMenu.ChooseStack(GetDescription(InsertFlashcardSelection.ChooseStack));
+					if (tempId != 0)
+						inputs.Add(InsertFlashcardSelection.ChooseStack, //Flashcard.StackId.ToString());
 					break;
+
 				default:
 					throw new UnauthorizedAccessException("Insert Flashcard Selection option not recognised.");
 			}
 		}
 	}
+
+	
 }
