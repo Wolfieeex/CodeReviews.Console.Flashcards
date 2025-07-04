@@ -142,6 +142,7 @@ internal class FlashcardMenu : Menu
 			$"in Stack [#{menuColors.Important2Color.ToHex()}]\"{dataAccess.GetStackName(addFlashcardMenu.Flashcard.StackId)}\"[/]" +
 			$" has been added! Press any button to continue: ");
 		Console.ReadKey();
+		Console.Clear();
 	}
 
 	public static int ChooseStack(string message)
