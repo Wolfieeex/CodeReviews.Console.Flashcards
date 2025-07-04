@@ -204,4 +204,14 @@ internal class Input
 				throw new ArgumentException("There is an error in Compare method in Input class. No default results are expected in the switch statement.");
 		}
 	}
+
+	internal static bool StackDatabaseRepetitionCheck()
+	{
+		throw new NotImplementedException();
+	}
+
+	internal static bool FlashcardDataBaseRepetitionCheck()
+	{
+		throw new NotImplementedException();
+	}
 }
