@@ -59,25 +59,46 @@ internal class StacksMenu : Menu
 
 	private void UpdateStack()
 	{
-		
 		bool updateStackLoop = true;
 		while (updateStackLoop)
 		{
+			Console.Clear();
+
 			var stack = new Stack();
 
 			var id = ChooseStack("Choose stack you want to update: ");
 			if (id == -1)
 				return;
-
 			stack.Id = id;
 
-			string tempName = stack.Name;
+			string tempName = null;
 			Input.ValidateInput(ref tempName, "Insert a new name of your stack: ", ValidationType.AnyNonBlank, menuColors, BackOptions.Exit);
-			stack.Name = tempName;
 
 			if (string.IsNullOrEmpty(tempName))
 			{
-				Console.Clear();
+				continue;
+			}
+			stack.Name = tempName;
+
+			bool repetitionCheck = Input.StackDatabaseRepetitionCheck(tempName);
+			while (!repetitionCheck)
+			{
+				AnsiConsole.Markup($"[#{menuColors.NegativeColor.ToHex()}]{tempName}[/] stack name already exists in the database." +
+					$" Please select [#{menuColors.Important3Color.ToHex()}]another name[/] for your stack.\n\n");
+
+				tempName = null;
+				Input.ValidateInput(ref tempName, "Insert a new name of your stack: ", ValidationType.Text, menuColors, BackOptions.Exit, dontClear: true);
+
+				if (string.IsNullOrEmpty(tempName))
+				{
+					break;
+				}
+				stack.Name = tempName;
+
+				repetitionCheck = Input.StackDatabaseRepetitionCheck(tempName);
+			}
+			if (!repetitionCheck)
+			{
 				continue;
 			}
 
@@ -108,7 +129,6 @@ internal class StacksMenu : Menu
 				Console.Clear();
 				continue;
 			}
-
 			var dataAccess = new DataAccess();
 
 			string stackName = dataAccess.GetStackName(id);
@@ -128,10 +148,26 @@ internal class StacksMenu : Menu
 
 		string dummyName = stack.Name;
 		Input.ValidateInput(ref dummyName, "Insert the stack's name: ", ValidationType.Text, menuColors, BackOptions.Exit);
-		stack.Name = dummyName;
 
 		if (string.IsNullOrEmpty(dummyName))
 			return;
+
+		bool repetitionCheck = Input.StackDatabaseRepetitionCheck(dummyName);
+		while (!repetitionCheck)
+		{
+			AnsiConsole.Markup($"[#{menuColors.NegativeColor.ToHex()}]{dummyName}[/] stack name already exists in the database." +
+				$" Please select [#{menuColors.Important3Color.ToHex()}]another name[/] for your stack.\n\n");
+
+			dummyName = null;
+			Input.ValidateInput(ref dummyName, "Insert the stack's name: ", ValidationType.Text, menuColors, BackOptions.Exit, dontClear: true);
+
+			if (string.IsNullOrEmpty(dummyName))
+				return;
+
+			repetitionCheck = Input.StackDatabaseRepetitionCheck(dummyName);
+		}
+
+		stack.Name = dummyName;
 
 		var dataAccess = new DataAccess();
 		dataAccess.InsertStack(stack);
@@ -144,7 +180,40 @@ internal class StacksMenu : Menu
 
 	private void ViewStacks()
 	{
-		throw new NotImplementedException();
+		Console.Clear(); 
+
+		var dataAccess = new DataAccess();
+		var stacks = dataAccess.GetAllStacks();
+
+		var stacksArray = stacks.Select(x => x.Name.ToString());
+
+		Table table = new Table();
+
+		table.AddColumn("Index");
+		table.AddColumn("Stack Name");
+
+		int longestInsert = 3;
+		int index = 1;
+		foreach (string stack in stacksArray)
+		{
+			if (stack.Length > longestInsert)
+			{
+				longestInsert = stack.Length;
+			}
+			table.AddRow(new string[] { index.ToString(), stack });
+
+			index++;
+		}
+
+		table.ShowRowSeparators();
+		table.BorderStyle = new Style(foreground: menuColors.PositiveColor);
+		table.Centered();
+
+		AnsiConsole.Write(table);
+
+		AnsiConsole.Write(new Markup("Your stacks are displayed in the table above. Press any button to return to previous menu: ").Justify(Justify.Center));
+		Console.ReadKey();
+		Console.Clear();
 	}
 
 	/// <returns>Returns -1 if user returns to previous menu without selection.</returns>

@@ -21,17 +21,24 @@ internal class Input
 
 	private static string input;
 
-	public static void ValidateInput(ref string previousInput, string text, ValidationType type, MenuColors menuColors, BackOptions backOptions = BackOptions.Blank)
+	private static bool noClear;
+
+	public static void ValidateInput(ref string previousInput, string text, ValidationType type, MenuColors menuColors, BackOptions backOptions = BackOptions.Blank, bool dontClear = false)
 	{
 		validationText = text;
 		validationType = type;
 		Input.menuColors = menuColors;
 		Input.backOptions = backOptions;
 		input = previousInput;
+		noClear = dontClear;
 
 		try
 		{
-			Console.Clear();
+			if (!dontClear)
+			{
+				Console.Clear();
+			}
+
 			switch (type)
 			{
 				case ValidationType.Any:
@@ -64,7 +71,11 @@ internal class Input
 
 	private static void ValidateAnyNonBlank()
 	{
-		DisplayBackOptions();
+		if (!noClear)
+		{
+			DisplayBackOptions();
+		}
+
 		bool validationPending = true;
 		while (validationPending)
 		{
@@ -114,7 +125,11 @@ internal class Input
 
 	private static void ValidateText()
 	{
-		DisplayBackOptions();
+		if (!noClear)
+		{
+			DisplayBackOptions();
+		}
+
 		bool validationPending = true;
 		while (validationPending)
 		{
@@ -205,12 +220,22 @@ internal class Input
 		}
 	}
 
-	internal static bool StackDatabaseRepetitionCheck()
+	internal static bool StackDatabaseRepetitionCheck(string input)
 	{
-		throw new NotImplementedException();
+		DataAccess dataAccess = new DataAccess();
+		var stacks = dataAccess.GetAllStacks();
+
+		var arrayOfStacks = stacks.Select(x => x.Name).ToArray();
+
+		foreach (var stack in arrayOfStacks)
+		{
+			if (stack.ToLower() == input.ToLower())
+				return false;
+		}
+		return true;
 	}
 
-	internal static bool FlashcardDataBaseRepetitionCheck()
+	internal static bool FlashcardDataBaseRepetitionCheck(int stackId, string input)
 	{
 		throw new NotImplementedException();
 	}
