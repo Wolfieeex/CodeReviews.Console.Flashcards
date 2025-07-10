@@ -41,13 +41,19 @@ internal class MultiInputMenuEnums
 		[EnumLabelSpecialLabel(SpecialLabels.Quit)]
 		ReturnToPreviousMenu,
 
+		[Description("Select a new question for your flashcard: ")]
 		[Display(Name = "Update Question")]
+		[EnumLabelSpecialLabel(SpecialLabels.OneOf)]
 		UpdateQuestion,
 
+		[Description("Select a new answer for your flashcard: ")]
 		[Display(Name = "Update Answer")]
+		[EnumLabelSpecialLabel(SpecialLabels.OneOf)]
 		UpdateAnswer,
 
+		[Description("Select a new name for your flashcard")]
 		[Display(Name = "Update Stack")]
+		[EnumLabelSpecialLabel(SpecialLabels.OneOf)]
 		UpdateStack,
 	}
 }

@@ -14,11 +14,23 @@ internal class FlashcardMenu : Menu
 
 		var menuSelections = Enum.GetValues(typeof(FlashcardChoices)).Cast<FlashcardChoices>();
 		
-		string[] choices = { "1", "2", "3" };
-
 		bool IsMenuRunning = true;
 		while (IsMenuRunning)
 		{
+			DataAccess dataAccess = new DataAccess();
+			var stacks = dataAccess.GetAllStacks();
+			if (stacks.Count() == 0)
+			{
+				AnsiConsole.Prompt(
+				new SelectionPrompt<string>()
+				.Title("You do not have any stacks added to your library, hence you cannot edit your flashcards yet.\n" +
+				"Go to the stacks menu, from the main menu and add your first stack:")
+				.AddChoices("[grey]Return to previous menu[/]")
+				.HighlightStyle(style)
+				);
+				return;
+			}
+
 			var userChoice = AnsiConsole.Prompt(
 				new SelectionPrompt<FlashcardChoices>()
 				.Title("What would you like to do today?")
@@ -77,7 +89,7 @@ internal class FlashcardMenu : Menu
 		bool mainDeleteMenu = true;
 		while (mainDeleteMenu)
 		{
-			var stackId = ChooseStack("Where is the flashcard you want to delete?:");
+			var stackId = ChooseStack("Where is the flashcard you want to delete?:", "There are no stacks to delete your flashcards from: ");
 			if (stackId == -1)
 			{
 				Console.Clear();
@@ -87,7 +99,11 @@ internal class FlashcardMenu : Menu
 			bool stackSelectedMenu = true;
 			while (stackSelectedMenu)
 			{
-				var flashcard = ChooseFlashcard("Choose flashcard you want to delete", stackId);
+				var dataAccess = new DataAccess();
+
+				var flashcard = ChooseFlashcard("Choose flashcard you want to delete: ", stackId, 
+					emptyListMessage: $"There are no flashcards to delete from [#{menuColors.NegativeColor.ToHex()}]\"" +
+					$"{dataAccess.GetStackName(stackId)}\"[/] stack:");
 				if (flashcard == -1)
 				{
 					stackSelectedMenu = false;
@@ -105,15 +121,13 @@ internal class FlashcardMenu : Menu
 						continue;
 					}
 
-					var dataAccess = new DataAccess();
+					
 
 					string flashcardName = dataAccess.GetFlashcardName(stackId, flashcard);
 
 					dataAccess.DeleteFlashcard(flashcard);
 
 					flashcardSelectedMenu = false;
-					stackSelectedMenu = false;
-					mainDeleteMenu = false;
 					Console.Clear();
 
 					AnsiConsole.Markup($"Flashcard [#{menuColors.NegativeColor.ToHex()}]\"{flashcardName}\"[/] was deleted successfully! Press any button to continue: ");
@@ -145,14 +159,21 @@ internal class FlashcardMenu : Menu
 		Console.Clear();
 	}
 
-	public static int ChooseStack(string message)
+	public static int ChooseStack(string message, string emptyListMessage = null)
 	{
 		var dataAccess = new DataAccess();
 		var stacks = dataAccess.GetAllStacks();
 
 		var stacksArray = stacks.Select(x => x.Name).ToArray();
+
+		string title = message;
+		if (stacksArray.Length == 0 && !string.IsNullOrEmpty(emptyListMessage))
+		{
+			title = emptyListMessage;
+		}	
+
 		var option = AnsiConsole.Prompt(new SelectionPrompt<string>()
-			.Title(message)
+			.Title(title)
 			.AddChoices("[grey]Return to previous menu[/]")
 			.AddChoices(stacksArray));
 
@@ -160,14 +181,21 @@ internal class FlashcardMenu : Menu
 	}
 
 	/// <returns>Returns -1 if user returns to previous menu without selection.</returns>
-	public static int ChooseFlashcard(string message, int stackId)
+	public static int ChooseFlashcard(string message, int stackId, string emptyListMessage = null)
 	{
 		var dataAccess = new DataAccess();
 		var flashcards = dataAccess.GetAllFlashcards(stackId);
 
 		var flashcardsArray = flashcards.Select(x => x.Question).ToArray();
+
+		string title = message;
+		if (flashcardsArray.Length == 0 && !string.IsNullOrEmpty(emptyListMessage))
+		{
+			title = emptyListMessage;
+		}
+
 		var option = AnsiConsole.Prompt(new SelectionPrompt<string>()
-			.Title(message)
+			.Title(title)
 			.AddChoices("[grey]Return to previous menu[/]")
 			.AddChoices(flashcardsArray)
 			);
@@ -177,6 +205,32 @@ internal class FlashcardMenu : Menu
 
 	private void ViewFlashcards()
 	{
-		throw new NotImplementedException();
+		DataAccess dataAccess = new DataAccess();
+
+		bool viewFlashcardsMenuRunning = true;
+		while (viewFlashcardsMenuRunning)
+		{
+			var userInput = AnsiConsole.Prompt(new SelectionPrompt<string>()
+				.Title("View flashcard menu. Select your option: ")
+				.AddChoices(new string[] {"[grey]Return to previous menu[/]",
+				"View all flashcards",
+				"View flashcards by stack"})
+				.HighlightStyle(style)
+				);
+
+			switch (userInput)
+			{
+				case "[grey]Return to previous menu[/]":
+					return;
+				case "View all flashcards":
+					// Get all stacks, loop from each of them to get flashcards from, build data table. If list empty, display message instead.
+					break;
+				case "View flashcards by stack":
+					var stack = ChooseStack("Select a stack from which you want to view your flashcards: ");
+					// Retreive flashcards from stack and build a data table. Check for empty case.
+					break;
+
+			}
+		}
 	}
 }

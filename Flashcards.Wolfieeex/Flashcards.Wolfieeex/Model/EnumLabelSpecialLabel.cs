@@ -5,6 +5,7 @@
 		Quit,
 		Confirm,
 		NonOptional,
+		OneOf,
 		None
 	}
 

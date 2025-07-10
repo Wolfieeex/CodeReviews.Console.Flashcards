@@ -1,5 +1,6 @@
 ﻿using Flashcards.Wolfieeex.Controller;
 using Flashcards.Wolfieeex.Model;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Spectre.Console;
 using System.Text.RegularExpressions;
 using static Flashcards.Wolfieeex.Model.InputValidationEnums;
@@ -66,7 +67,7 @@ internal class StacksMenu : Menu
 
 			var stack = new Stack();
 
-			var id = ChooseStack("Choose stack you want to update: ");
+			var id = ChooseStack("Choose stack you want to update: ", "At this time there are no stacks to update:");
 			if (id == -1)
 				return;
 			stack.Id = id;
@@ -120,7 +121,7 @@ internal class StacksMenu : Menu
 		bool deleteStackLoop = true;
 		while (deleteStackLoop)
 		{
-			var id = ChooseStack("Choose stack to delete:");
+			var id = ChooseStack("Choose stack to delete:", "There are no stacks to delete at this time:");
 			if (id == -1)
 				return;
 
@@ -185,9 +186,19 @@ internal class StacksMenu : Menu
 		var dataAccess = new DataAccess();
 		var stacks = dataAccess.GetAllStacks();
 
+		if (stacks.Count() == 0)
+		{
+			Console.Clear();
+			var option = AnsiConsole.Prompt(new SelectionPrompt<string>()
+			.Title("At this time you have no stacks to view:")
+			.AddChoices("[grey]Return to previous menu[/]")
+			);
+			return;
+		}
+
 		var stacksArray = stacks.Select(x => x.Name.ToString());
 
-		Table table = new Table();
+		Spectre.Console.Table table = new Spectre.Console.Table();
 
 		table.AddColumn("Index");
 		table.AddColumn("Stack Name");
@@ -217,14 +228,21 @@ internal class StacksMenu : Menu
 	}
 
 	/// <returns>Returns -1 if user returns to previous menu without selection.</returns>
-	private static int ChooseStack(string message)
+	private static int ChooseStack(string message, string emptyListMessage = null)
 	{
 		var dataAccess = new DataAccess();
 		var stacks = dataAccess.GetAllStacks();
 
 		var stacksArray = stacks.Select(x => x.Name).ToArray();
+
+		string title = message;
+		if (stacksArray.Length == 0 && !string.IsNullOrEmpty(emptyListMessage))
+		{
+			title = emptyListMessage;
+		}
+
 		var option = AnsiConsole.Prompt(new SelectionPrompt<string>()
-			.Title(message)
+			.Title(title)
 			.AddChoices("[grey]Return to previous menu[/]")
 			.AddChoices(stacksArray)
 			);

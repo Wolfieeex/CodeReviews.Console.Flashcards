@@ -35,19 +35,34 @@ abstract public class MulitInputMenu : Menu
 
 	}
 
-	protected virtual IEnumerable<Enum> GenerateOptions()
+	protected virtual IEnumerable<Enum> GenerateOptions(bool checkForFlashcardRepetitions = false)
 	{
 		List<Enum> menuSelections = Enum.GetValues(_selectionType).Cast<Enum>().ToList();
 		List<Enum> generatedOptions = new();
 
 		bool displayConfirmation = true;
+		bool oneOfInList = false;
+		bool oneOfConfirmed = false;
 
 		foreach (Enum enumVal in _selectionType.GetEnumValues())
 		{
 			if (GetSpecialLabel(enumVal) == SpecialLabels.NonOptional)
 				if (!inputs.ContainsKey(enumVal))
 					displayConfirmation = false;
+
+			if (GetSpecialLabel(enumVal) == SpecialLabels.OneOf)
+			{
+				oneOfInList = true;
+
+				if (inputs.ContainsKey(enumVal))
+				{
+					oneOfConfirmed = true;
+				}
+			}
 		}
+
+		if (oneOfInList == true && oneOfConfirmed == false)
+			displayConfirmation = false;
 
 		foreach (Enum enumVal in _selectionType.GetEnumValues())
 		{

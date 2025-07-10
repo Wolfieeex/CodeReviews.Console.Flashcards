@@ -235,8 +235,29 @@ internal class Input
 		return true;
 	}
 
-	internal static bool FlashcardDataBaseRepetitionCheck(int stackId, string input)
+	internal static bool FlashcardDataBaseRepetitionCheck(string id, string input)
 	{
-		throw new NotImplementedException();
+		DataAccess data = new DataAccess();
+
+		int intId = 0;
+		var stacks = data.GetAllStacks();
+		foreach (var stack in stacks)
+		{
+			if (id.ToLower() == stack.Name.ToLower())
+			{
+				intId = stack.Id;
+			}
+		}
+
+		var flashcards = data.GetAllFlashcards(intId);
+
+		var arrayOfFlashcards = flashcards.Select(x => x.Question).ToArray();
+
+		foreach (var flashcard in arrayOfFlashcards)
+		{
+			if (flashcard.ToLower() == input.ToLower())
+				return false;
+		}
+		return true;
 	}
 }

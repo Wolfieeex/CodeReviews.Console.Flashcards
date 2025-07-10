@@ -22,13 +22,31 @@ internal class AddFlashcardMenu : MulitInputMenu
 		{
 			Console.Clear();
 
+			string title = "Choose options to insert your new Flashcard:";
+
+			if (inputs.ContainsKey(MultiInputMenuEnums.InsertFlashcardSelection.ChooseQuestion)
+				&& inputs.ContainsKey(MultiInputMenuEnums.InsertFlashcardSelection.ChooseStack))
+			{
+				if (!Input.FlashcardDataBaseRepetitionCheck(inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseStack],
+						inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseQuestion]))
+				{
+					title = $"The Flashcard with question [#{menuColors.Important3Color.ToHex()}]\"" +
+					$"{inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseQuestion]}\"[/] in stack " +
+					$"[#{menuColors.Important1Color.ToHex()}]\"" +
+					$"{inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseStack]}\"[/] already exists." +
+					$" Change one of those values to add a new Flashcard:";
+				}
+			}
+
 			var userInput = AnsiConsole.Prompt(new SelectionPrompt<Enum>()
-				.Title("Choose options to insert your new Flashcard:")
-				.AddChoices(GenerateOptions())
+				.Title(title)
+				.AddChoices(GenerateOptions(checkForFlashcardRepetitions: true))
 				.UseConverter(s => SmartOptionConverter(s))
 				.HighlightStyle(style)
 				.WrapAround()
 				);
+
+
 
 			switch (userInput)
 			{
