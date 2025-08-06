@@ -55,4 +55,16 @@ internal class SelectionEnums
 		[Display(Name = "Return To Main Menu")]
 		ReturnToMainMenu
 	}
+
+	internal enum FlashcardViewOptions
+	{
+		[Display(Name = "Return To Main Menu")]
+		ReturnToPreviousMenu,
+
+		[Display(Name = "View all Flashcards")]
+		ViewAllFlashcards,
+
+		[Display(Name = "View Flashcards by Stack")]
+		ViewFlashcardsByStack
+	}
 }

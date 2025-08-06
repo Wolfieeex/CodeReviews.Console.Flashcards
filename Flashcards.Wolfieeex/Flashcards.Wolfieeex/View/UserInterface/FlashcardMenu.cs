@@ -1,6 +1,6 @@
-﻿using Flashcards.Wolfieeex.Controller;
-using Spectre.Console;
+﻿using Spectre.Console;
 using static Flashcards.Wolfieeex.Model.SelectionEnums;
+using Flashcards.Wolfieeex.Model;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 
@@ -74,7 +74,7 @@ internal class FlashcardMenu : Menu
 	{
 		var stackId = ChooseStack("Choose the stack where the flashcard is: ");
 
-		AddFlashcardMenu addFlashcardMenu = new(menuColors.UserInputColor);
+		UpdateFlashcardMenu addFlashcardMenu = new(menuColors.UserInputColor);
 		addFlashcardMenu.DisplayMenu();
 
 		/*var flashcardId = ChooseFlashcard("Choose flashcard to update", stackId);
@@ -210,27 +210,65 @@ internal class FlashcardMenu : Menu
 		bool viewFlashcardsMenuRunning = true;
 		while (viewFlashcardsMenuRunning)
 		{
-			var userInput = AnsiConsole.Prompt(new SelectionPrompt<string>()
+			var menuSelections = Enum.GetValues(typeof(FlashcardViewOptions)).Cast<FlashcardViewOptions>();
+			var userInput = AnsiConsole.Prompt(new SelectionPrompt<FlashcardViewOptions>()
 				.Title("View flashcard menu. Select your option: ")
-				.AddChoices(new string[] {"[grey]Return to previous menu[/]",
-				"View all flashcards",
-				"View flashcards by stack"})
+				.AddChoices(menuSelections)
+				.UseConverter(x => GetDisplayName(x))
 				.HighlightStyle(style)
 				);
 
+			List<Flashcard> flashcards = new List<Flashcard>();
+			int stackId = 0;
 			switch (userInput)
 			{
-				case "[grey]Return to previous menu[/]":
+				case FlashcardViewOptions.ReturnToPreviousMenu:
 					return;
-				case "View all flashcards":
-					// Get all stacks, loop from each of them to get flashcards from, build data table. If list empty, display message instead.
+				case FlashcardViewOptions.ViewAllFlashcards:
+					var ids = dataAccess.GetAllStacks().Select(x => x.Id);
+					foreach (var id in ids)
+					{
+						List<Flashcard> tempFlashcards = dataAccess.GetAllFlashcards(id).ToList();
+						flashcards.AddRange(tempFlashcards);
+					}
 					break;
-				case "View flashcards by stack":
-					var stack = ChooseStack("Select a stack from which you want to view your flashcards: ");
-					// Retreive flashcards from stack and build a data table. Check for empty case.
+				case FlashcardViewOptions.ViewFlashcardsByStack:
+					stackId = ChooseStack("Select a stack from which you want to view your flashcards: ");
+					flashcards = dataAccess.GetAllFlashcards(stackId).ToList();
 					break;
 
 			}
+
+			Table table = new Table();
+			table.AddColumn("Index");
+			table.AddColumn("Stack");
+			table.AddColumn("Question");
+			table.AddColumn("Answer");
+
+			table.ShowRowSeparators = true;
+			table.BorderStyle = new Style(foreground: menuColors.PositiveColor);
+			table.Centered();
+
+			int index = 1;
+			foreach (var flashcard in flashcards)
+			{
+				string[] parameters = { index.ToString(), dataAccess.GetStackName(flashcard.StackId), flashcard.Question, flashcard.Answer };
+				table.AddRow(parameters);
+				index++;
+			}
+
+			AnsiConsole.Write(table);
+			Console.WriteLine();
+
+			string displayText = userInput == FlashcardViewOptions.ViewAllFlashcards ? "flashcards" : dataAccess.GetStackName(stackId);
+			string markupText = $"Your {displayText} are displayed in the table above. Press any button to return to previous menu: ";
+			int windowWidth = Console.WindowWidth;
+			int textStart = (windowWidth - markupText.Length) / 2;
+
+			Console.SetCursorPosition(textStart, Console.CursorTop);
+			AnsiConsole.Write(markupText);
+			Console.ReadKey();
+			Console.Clear();
 		}
 	}
 }

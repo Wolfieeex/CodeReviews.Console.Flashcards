@@ -221,8 +221,14 @@ internal class StacksMenu : Menu
 		table.Centered();
 
 		AnsiConsole.Write(table);
+		Console.WriteLine();
 
-		AnsiConsole.Write(new Markup("Your stacks are displayed in the table above. Press any button to return to previous menu: ").Justify(Justify.Center));
+		string markupText = "Your stacks are displayed in the table above. Press any button to return to previous menu: ";
+		int windowWidth = Console.WindowWidth;
+		int textStart = (windowWidth - markupText.Length) / 2;
+
+		Console.SetCursorPosition(textStart, Console.CursorTop);
+		AnsiConsole.Write(markupText);
 		Console.ReadKey();
 		Console.Clear();
 	}
