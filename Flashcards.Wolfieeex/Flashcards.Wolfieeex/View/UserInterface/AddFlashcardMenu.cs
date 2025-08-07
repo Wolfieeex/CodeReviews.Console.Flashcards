@@ -104,7 +104,7 @@ internal class AddFlashcardMenu : MulitInputMenu
 					break;
 
 				case InsertFlashcardSelection.ChooseStack:
-					int tempId = FlashcardMenu.ChooseStack(GetDescription(InsertFlashcardSelection.ChooseStack));
+					int tempId = FlashcardMenu.ChooseStack(GetDescription(InsertFlashcardSelection.ChooseStack), menuColors.Important2Color);
 					if (tempId != -1)
 					{
 						if (inputs.ContainsKey(InsertFlashcardSelection.ChooseStack))

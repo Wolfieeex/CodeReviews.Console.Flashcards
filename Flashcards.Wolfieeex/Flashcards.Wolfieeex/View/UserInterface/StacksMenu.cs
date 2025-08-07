@@ -67,7 +67,7 @@ internal class StacksMenu : Menu
 
 			var stack = new Stack();
 
-			var id = ChooseStack("Choose stack you want to update: ", "At this time there are no stacks to update:");
+			var id = ChooseStack("Choose stack you want to update: ", menuColors.UserInputColor, "At this time there are no stacks to update:");
 			if (id == -1)
 				return;
 			stack.Id = id;
@@ -121,7 +121,7 @@ internal class StacksMenu : Menu
 		bool deleteStackLoop = true;
 		while (deleteStackLoop)
 		{
-			var id = ChooseStack("Choose stack to delete:", "There are no stacks to delete at this time:");
+			var id = ChooseStack("Choose stack to delete:", menuColors.UserInputColor, "There are no stacks to delete at this time:");
 			if (id == -1)
 				return;
 
@@ -234,7 +234,7 @@ internal class StacksMenu : Menu
 	}
 
 	/// <returns>Returns -1 if user returns to previous menu without selection.</returns>
-	private static int ChooseStack(string message, string emptyListMessage = null)
+	private static int ChooseStack(string message, Color color, string emptyListMessage = null)
 	{
 		var dataAccess = new DataAccess();
 		var stacks = dataAccess.GetAllStacks();
@@ -250,6 +250,7 @@ internal class StacksMenu : Menu
 		var option = AnsiConsole.Prompt(new SelectionPrompt<string>()
 			.Title(title)
 			.AddChoices("[grey]Return to previous menu[/]")
+			.HighlightStyle(color)
 			.AddChoices(stacksArray)
 			);
 

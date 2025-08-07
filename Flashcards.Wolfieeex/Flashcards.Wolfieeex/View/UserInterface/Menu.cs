@@ -26,13 +26,13 @@ public abstract class Menu
 		{
 			_menuColor = value;
 			menuColors.TitleColor = value;
-			menuColors.SelectorsColor = value.Blend(Color.White, 0.2f);
-			menuColors.Important1Color = value.Blend(Color.Orange1, 0.2f);
-			menuColors.Important2Color = value.Blend(Color.Magenta1, 0.2f);
-			menuColors.Important3Color = value.Blend(Color.Pink1, 0.2f);
-			menuColors.UserInputColor = value.Blend(Color.Yellow, 0.2f);
-			menuColors.PositiveColor = value.Blend(Color.Green, 0.2f);
-			menuColors.NegativeColor = value.Blend(Color.Red, 0.2f);
+			menuColors.SelectorsColor = value.Blend(Color.White, 0.6f);
+			menuColors.Important1Color = value.Blend(Color.Orange1, 0.6f);
+			menuColors.Important2Color = value.Blend(Color.Magenta1, 0.6f);
+			menuColors.Important3Color = value.Blend(Color.Pink1, 0.6f);
+			menuColors.UserInputColor = value.Blend(Color.Yellow, 0.6f);
+			menuColors.PositiveColor = value.Blend(Color.Green, 0.6f);
+			menuColors.NegativeColor = value.Blend(Color.Red, 0.6f);
 		}
 	}
 	protected MenuColors menuColors;

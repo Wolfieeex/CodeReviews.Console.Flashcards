@@ -72,8 +72,6 @@ internal class FlashcardMenu : Menu
 
 	private void UpdateFlashcard()
 	{
-		var stackId = ChooseStack("Choose the stack where the flashcard is: ");
-
 		UpdateFlashcardMenu addFlashcardMenu = new(menuColors.UserInputColor);
 		addFlashcardMenu.DisplayMenu();
 
@@ -89,7 +87,7 @@ internal class FlashcardMenu : Menu
 		bool mainDeleteMenu = true;
 		while (mainDeleteMenu)
 		{
-			var stackId = ChooseStack("Where is the flashcard you want to delete?:", "There are no stacks to delete your flashcards from: ");
+			var stackId = ChooseStack("Where is the flashcard you want to delete?:", menuColors.UserInputColor, "There are no stacks to delete your flashcards from: ");
 			if (stackId == -1)
 			{
 				Console.Clear();
@@ -102,6 +100,7 @@ internal class FlashcardMenu : Menu
 				var dataAccess = new DataAccess();
 
 				var flashcard = ChooseFlashcard("Choose flashcard you want to delete: ", stackId, 
+					menuColors.Important1Color,
 					emptyListMessage: $"There are no flashcards to delete from [#{menuColors.NegativeColor.ToHex()}]\"" +
 					$"{dataAccess.GetStackName(stackId)}\"[/] stack:");
 				if (flashcard == -1)
@@ -159,7 +158,7 @@ internal class FlashcardMenu : Menu
 		Console.Clear();
 	}
 
-	public static int ChooseStack(string message, string emptyListMessage = null)
+	public static int ChooseStack(string message, Color color, string emptyListMessage = null)
 	{
 		var dataAccess = new DataAccess();
 		var stacks = dataAccess.GetAllStacks();
@@ -175,13 +174,15 @@ internal class FlashcardMenu : Menu
 		var option = AnsiConsole.Prompt(new SelectionPrompt<string>()
 			.Title(title)
 			.AddChoices("[grey]Return to previous menu[/]")
+			.HighlightStyle(color)
 			.AddChoices(stacksArray));
+		
 
 		return stacks.SingleOrDefault(x => x.Name == option)?.Id ?? -1;
 	}
 
 	/// <returns>Returns -1 if user returns to previous menu without selection.</returns>
-	public static int ChooseFlashcard(string message, int stackId, string emptyListMessage = null)
+	public static int ChooseFlashcard(string message, int stackId, Color color, string emptyListMessage = null)
 	{
 		var dataAccess = new DataAccess();
 		var flashcards = dataAccess.GetAllFlashcards(stackId);
@@ -197,6 +198,7 @@ internal class FlashcardMenu : Menu
 		var option = AnsiConsole.Prompt(new SelectionPrompt<string>()
 			.Title(title)
 			.AddChoices("[grey]Return to previous menu[/]")
+			.HighlightStyle(color)
 			.AddChoices(flashcardsArray)
 			);
 			
@@ -233,7 +235,7 @@ internal class FlashcardMenu : Menu
 					}
 					break;
 				case FlashcardViewOptions.ViewFlashcardsByStack:
-					stackId = ChooseStack("Select a stack from which you want to view your flashcards: ");
+					stackId = ChooseStack("Select a stack from which you want to view your flashcards: ", menuColors.UserInputColor);
 					flashcards = dataAccess.GetAllFlashcards(stackId).ToList();
 					break;
 
