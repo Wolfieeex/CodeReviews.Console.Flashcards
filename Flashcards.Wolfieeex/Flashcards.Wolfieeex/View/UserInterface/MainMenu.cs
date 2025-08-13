@@ -17,7 +17,7 @@ public class MainMenu : Menu
 			AnsiConsole.Write(
 				new FigletText("Flashcards")
 				.Centered()
-				.Color(Color.CadetBlue));
+				.Color(menuColors.TitleColor));
 
 			var menuSelections = Enum.GetValues(typeof(MainMenuChoices)).Cast<MainMenuChoices>();
 

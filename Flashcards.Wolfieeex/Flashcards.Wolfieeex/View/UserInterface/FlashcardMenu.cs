@@ -142,20 +142,26 @@ internal class FlashcardMenu : Menu
 		string dummyInput = "";
 
 		AddFlashcardMenu addFlashcardMenu = new(menuColors.UserInputColor);
-		addFlashcardMenu.DisplayMenu();
 
-		if (addFlashcardMenu.Flashcard == null)
-			return;
+		bool runFlashcardMenu = true;
+		while (runFlashcardMenu)
+		{
+			addFlashcardMenu.DisplayMenu();
+			if (addFlashcardMenu.Flashcard == null)
+				return;
 
-		var dataAccess = new DataAccess();
-		dataAccess.InsertFlashcard(addFlashcardMenu.Flashcard);
+			var dataAccess = new DataAccess();
+			dataAccess.InsertFlashcard(addFlashcardMenu.Flashcard);
 
-		Console.Clear();
-		AnsiConsole.Markup($"Your new Flashcard [#{menuColors.Important3Color.ToHex()}]\"{addFlashcardMenu.Flashcard.Question}\"[/] " +
-			$"in Stack [#{menuColors.Important2Color.ToHex()}]\"{dataAccess.GetStackName(addFlashcardMenu.Flashcard.StackId)}\"[/]" +
-			$" has been added! Press any button to continue: ");
-		Console.ReadKey();
-		Console.Clear();
+			Console.Clear();
+			AnsiConsole.Markup($"Your new Flashcard [#{menuColors.Important3Color.ToHex()}]\"{addFlashcardMenu.Flashcard.Question}\"[/] " +
+				$"in Stack [#{menuColors.Important2Color.ToHex()}]\"{dataAccess.GetStackName(addFlashcardMenu.Flashcard.StackId)}\"[/]" +
+				$" has been added! Press any button to continue: ");
+			Console.ReadKey();
+			Console.Clear();
+
+			addFlashcardMenu.ClearQuestionAnswer();
+		}
 	}
 
 	public static int ChooseStack(string message, Color color, string emptyListMessage = null)
@@ -208,10 +214,12 @@ internal class FlashcardMenu : Menu
 	private void ViewFlashcards()
 	{
 		DataAccess dataAccess = new DataAccess();
+		int stackId = 0;
 
 		bool viewFlashcardsMenuRunning = true;
 		while (viewFlashcardsMenuRunning)
 		{
+
 			var menuSelections = Enum.GetValues(typeof(FlashcardViewOptions)).Cast<FlashcardViewOptions>();
 			var userInput = AnsiConsole.Prompt(new SelectionPrompt<FlashcardViewOptions>()
 				.Title("View flashcard menu. Select your option: ")
@@ -219,9 +227,8 @@ internal class FlashcardMenu : Menu
 				.UseConverter(x => GetDisplayName(x))
 				.HighlightStyle(style)
 				);
-
 			List<Flashcard> flashcards = new List<Flashcard>();
-			int stackId = 0;
+			
 			switch (userInput)
 			{
 				case FlashcardViewOptions.ReturnToPreviousMenu:
@@ -236,9 +243,27 @@ internal class FlashcardMenu : Menu
 					break;
 				case FlashcardViewOptions.ViewFlashcardsByStack:
 					stackId = ChooseStack("Select a stack from which you want to view your flashcards: ", menuColors.UserInputColor);
+					if (stackId == -1)
+					{
+						continue;
+					}
 					flashcards = dataAccess.GetAllFlashcards(stackId).ToList();
 					break;
 
+			}
+
+			if (flashcards.Count == 0)
+			{
+				string returnText = userInput == FlashcardViewOptions.ViewAllFlashcards ?
+					"Your stacks do not contain any flashcards at the moment, so there are none to view. Press any button" +
+					" to return to previous menu: " :
+					$"Stack [#{menuColors.NegativeColor.ToHex()}]\"{dataAccess.GetStackName(stackId)}\"[/] " +
+					$"does not have any flashcards to view yet. Press any button to return to previous menu: ";
+
+				AnsiConsole.Markup(returnText);
+				Console.ReadKey();
+				Console.Clear();
+				continue;
 			}
 
 			Table table = new Table();

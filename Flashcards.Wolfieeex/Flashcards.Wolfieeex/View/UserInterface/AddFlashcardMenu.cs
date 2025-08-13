@@ -126,5 +126,11 @@ internal class AddFlashcardMenu : MulitInputMenu
 		}
 	}
 
-	
+	internal void ClearQuestionAnswer()
+	{
+		inputs.Remove(InsertFlashcardSelection.ChooseQuestion);
+		inputs.Remove(InsertFlashcardSelection.ChooseAnswer);
+		Flashcard.Question = null;
+		Flashcard.Answer = null;
+	}
 }
