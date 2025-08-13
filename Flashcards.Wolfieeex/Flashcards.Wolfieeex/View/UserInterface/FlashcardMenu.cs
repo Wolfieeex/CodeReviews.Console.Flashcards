@@ -219,15 +219,23 @@ internal class FlashcardMenu : Menu
 		bool viewFlashcardsMenuRunning = true;
 		while (viewFlashcardsMenuRunning)
 		{
+			FlashcardViewOptions userInput;
+			if (stackId <= 0)
+			{
+				var menuSelections = Enum.GetValues(typeof(FlashcardViewOptions)).Cast<FlashcardViewOptions>();
+				userInput = AnsiConsole.Prompt(new SelectionPrompt<FlashcardViewOptions>()
+					.Title("View flashcard menu. Select your option: ")
+					.AddChoices(menuSelections)
+					.UseConverter(x => GetDisplayName(x))
+					.HighlightStyle(style)
+					);
+			}
+			else
+			{
+				userInput = FlashcardViewOptions.ViewFlashcardsByStack;
+			}
 
-			var menuSelections = Enum.GetValues(typeof(FlashcardViewOptions)).Cast<FlashcardViewOptions>();
-			var userInput = AnsiConsole.Prompt(new SelectionPrompt<FlashcardViewOptions>()
-				.Title("View flashcard menu. Select your option: ")
-				.AddChoices(menuSelections)
-				.UseConverter(x => GetDisplayName(x))
-				.HighlightStyle(style)
-				);
-			List<Flashcard> flashcards = new List<Flashcard>();
+				List<Flashcard> flashcards = new List<Flashcard>();
 			
 			switch (userInput)
 			{
