@@ -9,7 +9,7 @@ namespace Flashcards.Wolfieeex.View.UserInterface;
 abstract public class MulitInputMenu : Menu
 {
 	protected Type _selectionType;
-
+	protected bool repetitionCheckFail = false;
 	protected Dictionary<Enum, string> inputs = new Dictionary<Enum, string>();
 
 	public MulitInputMenu(Color color) : base(color) {}
@@ -28,11 +28,6 @@ abstract public class MulitInputMenu : Menu
 		{
 			Console.WriteLine($"There was an error while running Multi Input Menu with {_selectionType} type: {ex.Message}");
 		}
-	}
-
-	private void AssignNewInput(Enum enumValue, ValidationType validation, BackOptions backSetting)
-	{
-
 	}
 
 	protected virtual IEnumerable<Enum> GenerateOptions(bool checkForFlashcardRepetitions = false)
@@ -68,7 +63,7 @@ abstract public class MulitInputMenu : Menu
 		{
 			if (GetSpecialLabel(enumVal) == SpecialLabels.Confirm)
 			{
-				if (displayConfirmation)
+				if (displayConfirmation && !repetitionCheckFail)
 				{
 					generatedOptions.Add(enumVal);
 				}

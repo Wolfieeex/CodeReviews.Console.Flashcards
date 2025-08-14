@@ -239,17 +239,7 @@ internal class Input
 	{
 		DataAccess data = new DataAccess();
 
-		int intId = 0;
-		var stacks = data.GetAllStacks();
-		foreach (var stack in stacks)
-		{
-			if (id.ToLower() == stack.Name.ToLower())
-			{
-				intId = stack.Id;
-			}
-		}
-
-		var flashcards = data.GetAllFlashcards(intId);
+		var flashcards = data.GetAllFlashcards(int.Parse(id));
 
 		var arrayOfFlashcards = flashcards.Select(x => x.Question).ToArray();
 

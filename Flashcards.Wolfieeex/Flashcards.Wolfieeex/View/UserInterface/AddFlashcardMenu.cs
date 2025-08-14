@@ -9,6 +9,7 @@ namespace Flashcards.Wolfieeex.View.UserInterface;
 internal class AddFlashcardMenu : MulitInputMenu
 {
 	public Flashcard Flashcard { get; private set; } = new();
+	public DataAccess dataAccess { get; private set; } = new();
 
 	public AddFlashcardMenu(Color color) : base(color)
 	{
@@ -30,11 +31,16 @@ internal class AddFlashcardMenu : MulitInputMenu
 				if (!Input.FlashcardDataBaseRepetitionCheck(inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseStack],
 						inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseQuestion]))
 				{
+					repetitionCheckFail = true;
 					title = $"The Flashcard with question [#{menuColors.Important3Color.ToHex()}]\"" +
 					$"{inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseQuestion]}\"[/] in stack " +
 					$"[#{menuColors.Important1Color.ToHex()}]\"" +
-					$"{inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseStack]}\"[/] already exists." +
-					$" Change one of those values to add a new Flashcard:";
+					$"{dataAccess.GetStackName(int.Parse(inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseStack]))}\"[/] already exists." +
+					$" Choose a different question: ";
+				}
+				else
+				{
+					repetitionCheckFail = false;
 				}
 			}
 
