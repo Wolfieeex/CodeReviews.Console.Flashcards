@@ -295,4 +295,19 @@ internal class DataAccess
 			}).Name;
 		}
 	}
+
+    internal Flashcard GetFlashcard(int stackId, int flashcardId)
+    {
+        using (var connection = new SqlConnection(ConnectionString))
+        {
+            connection.Open();
+            string command = $"SELECT * FROM Flashcards WHERE Id = @FlashcardId AND StackId = @StackId";
+
+            return connection.QueryFirstOrDefault<Flashcard>(command, new
+            {
+                FlashcardId = flashcardId,
+                StackId = stackId
+            });
+        }
+    }
 }

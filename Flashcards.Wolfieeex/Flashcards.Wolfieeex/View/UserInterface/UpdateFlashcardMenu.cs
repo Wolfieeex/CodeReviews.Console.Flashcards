@@ -41,13 +41,20 @@ internal class UpdateFlashcardMenu : MulitInputMenu
 					continue;
 				}
 
-				// Load the old flashcard in
-
+				Flashcard = dataAccess.GetFlashcard(stackId, flashcardId);
+				inputs.Add(UpdateFlashcardSelection.UpdateAnswer);
+				inputs.Add(UpdateFlashcardSelection.UpdateQuestion);
+				inputs.Add(UpdateFlashcardSelection.UpdateStack);
 
 				bool isFlashcardSelected = true;
 				while (isFlashcardSelected)
 				{
-					string title = "Choose new parameters for your flashcard: ";
+					Console.Clear();
+
+					string stackOldName = dataAccess.GetStackName(stackId);
+					string flashcardOldName = dataAccess.GetFlashcardName(stackId, flashcardId);
+					string title = $"Choose new parameters for your [#{menuColors.Important1Color.ToHex()}]{stackOldName}[/] flashcard " +
+						$"from [#{menuColors.Important2Color.ToHex()}]{flashcardOldName}[/] stack:";
 
 					if (inputs.ContainsKey(MultiInputMenuEnums.InsertFlashcardSelection.ChooseQuestion)
 						&& inputs.ContainsKey(MultiInputMenuEnums.InsertFlashcardSelection.ChooseStack))
@@ -60,7 +67,7 @@ internal class UpdateFlashcardMenu : MulitInputMenu
 							$"{inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseQuestion]}\"[/] in stack " +
 							$"[#{menuColors.Important1Color.ToHex()}]\"" +
 							$"{dataAccess.GetStackName(int.Parse(inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseStack]))}\"[/] already exists." +
-							$" Choose a different question: ";
+							$" Choose a different question to update: ";
 						}
 						else
 						{
@@ -78,71 +85,72 @@ internal class UpdateFlashcardMenu : MulitInputMenu
 
 					switch (userInput)
 					{
-						case InsertFlashcardSelection.Confirm:
+						case UpdateFlashcardSelection.Confirm:
 							return;
 
-						case InsertFlashcardSelection.ReturnToPreviousMenu:
+						case UpdateFlashcardSelection.ReturnToPreviousMenu:
 							Flashcard = null;
-							return;
+							isFlashcardSelected = false;
+							continue;
 
-						case InsertFlashcardSelection.ChooseAnswer:
+						case UpdateFlashcardSelection.UpdateAnswer:
 							string tempAnswer = null;
-							Input.ValidateInput(ref tempAnswer, GetDescription(InsertFlashcardSelection.ChooseAnswer), ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
+							Input.ValidateInput(ref tempAnswer, GetDescription(UpdateFlashcardSelection.UpdateAnswer), ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
 							if (tempAnswer == "")
 							{
-								inputs.Remove(InsertFlashcardSelection.ChooseAnswer);
+								inputs.Remove(UpdateFlashcardSelection.UpdateAnswer);
 								Flashcard.Answer = null;
 							}
 							else if (tempAnswer != null)
 							{
-								if (inputs.ContainsKey(InsertFlashcardSelection.ChooseAnswer))
+								if (inputs.ContainsKey(UpdateFlashcardSelection.UpdateAnswer))
 								{
-									inputs[InsertFlashcardSelection.ChooseAnswer] = tempAnswer;
+									inputs[UpdateFlashcardSelection.UpdateAnswer] = tempAnswer;
 									Flashcard.Answer = tempAnswer;
 								}
 								else
 								{
-									inputs.Add(InsertFlashcardSelection.ChooseAnswer, tempAnswer);
+									inputs.Add(UpdateFlashcardSelection.UpdateAnswer, tempAnswer);
 									Flashcard.Answer = tempAnswer;
 								}
 							}
 							break;
 
-						case InsertFlashcardSelection.ChooseQuestion:
+						case UpdateFlashcardSelection.UpdateQuestion:
 							string tempQuestion = null;
-							Input.ValidateInput(ref tempQuestion, GetDescription(InsertFlashcardSelection.ChooseQuestion), ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
+							Input.ValidateInput(ref tempQuestion, GetDescription(UpdateFlashcardSelection.UpdateQuestion), ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
 							if (tempQuestion == "")
 							{
-								inputs.Remove(InsertFlashcardSelection.ChooseQuestion);
+								inputs.Remove(UpdateFlashcardSelection.UpdateQuestion);
 								Flashcard.Question = null;
 							}
 							else if (tempQuestion != null)
 							{
-								if (inputs.ContainsKey(InsertFlashcardSelection.ChooseQuestion))
+								if (inputs.ContainsKey(UpdateFlashcardSelection.UpdateQuestion))
 								{
-									inputs[InsertFlashcardSelection.ChooseQuestion] = tempQuestion;
+									inputs[UpdateFlashcardSelection.UpdateQuestion] = tempQuestion;
 									Flashcard.Question = tempQuestion;
 								}
 								else
 								{
-									inputs.Add(InsertFlashcardSelection.ChooseQuestion, tempQuestion);
+									inputs.Add(UpdateFlashcardSelection.UpdateQuestion, tempQuestion);
 									Flashcard.Question = tempQuestion;
 								}
 							}
 							break;
 
-						case InsertFlashcardSelection.ChooseStack:
-							int tempId = FlashcardMenu.ChooseStack(GetDescription(InsertFlashcardSelection.ChooseStack), menuColors.Important2Color);
+						case UpdateFlashcardSelection.UpdateStack:
+							int tempId = FlashcardMenu.ChooseStack(GetDescription(UpdateFlashcardSelection.UpdateStack), menuColors.Important2Color);
 							if (tempId != -1)
 							{
-								if (inputs.ContainsKey(InsertFlashcardSelection.ChooseStack))
+								if (inputs.ContainsKey(UpdateFlashcardSelection.UpdateStack))
 								{
-									inputs[InsertFlashcardSelection.ChooseStack] = tempId.ToString();
+									inputs[UpdateFlashcardSelection.UpdateStack] = tempId.ToString();
 									Flashcard.StackId = tempId;
 								}
 								else
 								{
-									inputs.Add(InsertFlashcardSelection.ChooseStack, tempId.ToString());
+									inputs.Add(UpdateFlashcardSelection.UpdateStack, tempId.ToString());
 									Flashcard.StackId = tempId;
 								}
 							}
@@ -151,11 +159,6 @@ internal class UpdateFlashcardMenu : MulitInputMenu
 						default:
 							throw new UnauthorizedAccessException("Insert Flashcard Selection option not recognised.");
 					}
-
-					// Menu pops up
-					// Update the details
-					// Magic happens!
-
 				}
 			}
 		}
