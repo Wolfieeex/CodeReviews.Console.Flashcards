@@ -33,7 +33,7 @@ internal class MultiInputMenuEnums
 
 	public enum UpdateFlashcardSelection
 	{
-		[Display(Name = "Confirm and insert a new Flashcard!")]
+		[Display(Name = "Confirm and update Flashcard")]
 		[EnumLabelSpecialLabel(SpecialLabels.Confirm)]
 		Confirm,
 

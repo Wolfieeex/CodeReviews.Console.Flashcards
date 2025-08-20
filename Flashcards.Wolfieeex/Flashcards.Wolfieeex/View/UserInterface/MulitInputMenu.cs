@@ -79,16 +79,16 @@ abstract public class MulitInputMenu : Menu
 
 	abstract protected void MenuRunningLoop();
 
-	protected string SmartOptionConverter(Enum option)
+	protected string SmartOptionConverter(Enum option, Flashcard flashcard = null)
 	{
 		DataAccess dataAccess = new DataAccess();
-		
+
 		if (inputs.ContainsKey(option))
 			if (!int.TryParse(inputs[option], out _))
 			{
 				return GetDisplayName(option) + ": [#" + menuColors.Important2Color.ToHex() + "]" + inputs[option].ToString() + "[/]";
 			}
-			else 
+			else
 			{
 				if (Enum.TryParse<InsertFlashcardSelection>(option.ToString(), out _))
 				{
@@ -99,6 +99,23 @@ abstract public class MulitInputMenu : Menu
 					return GetDisplayName(option);
 				}
 			}
+		else if (flashcard != null)
+		{
+			switch (option)
+			{
+				case UpdateFlashcardSelection.UpdateStack:
+					return (GetDisplayName(option) + ": [#" + menuColors.UserInputColor.ToHex() + "]" + 
+						dataAccess.GetStackName(flashcard.StackId) + "[/]").TrimEnd(':', ' ');
+				case UpdateFlashcardSelection.UpdateAnswer:
+					return (GetDisplayName(option) + ": [#" + menuColors.UserInputColor.ToHex() + "]" +
+						flashcard.Answer + "[/]").TrimEnd(':', ' ');
+				case UpdateFlashcardSelection.UpdateQuestion:
+					return (GetDisplayName(option) + ": [#" + menuColors.UserInputColor.ToHex() + "]" +
+						flashcard.Question + "[/]").TrimEnd(':', ' ');
+				default:
+					return GetDisplayName(option);
+			}
+		}
 		else
 			return GetDisplayName(option);
 	}

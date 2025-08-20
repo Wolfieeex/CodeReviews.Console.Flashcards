@@ -1,6 +1,6 @@
 ﻿namespace Flashcards.Wolfieeex.Model;
 
-internal class Flashcard
+public class Flashcard
 {
 	public int Id { get; set; }
 	public string Question { get; set; }

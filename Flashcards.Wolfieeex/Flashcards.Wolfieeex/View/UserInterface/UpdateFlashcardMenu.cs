@@ -41,10 +41,7 @@ internal class UpdateFlashcardMenu : MulitInputMenu
 					continue;
 				}
 
-				Flashcard = dataAccess.GetFlashcard(stackId, flashcardId);
-				inputs.Add(UpdateFlashcardSelection.UpdateAnswer);
-				inputs.Add(UpdateFlashcardSelection.UpdateQuestion);
-				inputs.Add(UpdateFlashcardSelection.UpdateStack);
+				Flashcard oldFlashcardData = dataAccess.GetFlashcard(stackId, flashcardId);
 
 				bool isFlashcardSelected = true;
 				while (isFlashcardSelected)
@@ -78,7 +75,7 @@ internal class UpdateFlashcardMenu : MulitInputMenu
 					var userInput = AnsiConsole.Prompt(new SelectionPrompt<Enum>()
 					.Title(title)
 					.AddChoices(GenerateOptions(checkForFlashcardRepetitions: true))
-					.UseConverter(s => SmartOptionConverter(s))
+					.UseConverter(s => SmartOptionConverter(s, oldFlashcardData))
 					.HighlightStyle(style)
 					.WrapAround()
 					);
