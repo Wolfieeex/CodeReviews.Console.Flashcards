@@ -248,7 +248,7 @@ internal class DataAccess
         {
             connection.Open();
 
-            string updateQuery = "UPDATE flashcards SET";
+            string updateQuery = "UPDATE flashcards SET ";
             var parameters = new DynamicParameters();
 
             foreach (var kvp in updateProperties)

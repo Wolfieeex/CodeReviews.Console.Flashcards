@@ -1,6 +1,7 @@
-﻿using Spectre.Console;
+﻿using Flashcards.Wolfieeex.Model;
+using Spectre.Console;
+using System;
 using static Flashcards.Wolfieeex.Model.SelectionEnums;
-using Flashcards.Wolfieeex.Model;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 
@@ -67,19 +68,12 @@ internal class FlashcardMenu : Menu
 			}
 		}
 	}
-
 	
 
 	private void UpdateFlashcard()
 	{
 		UpdateFlashcardMenu addFlashcardMenu = new(menuColors.UserInputColor);
 		addFlashcardMenu.DisplayMenu();
-
-		/*var flashcardId = ChooseFlashcard("Choose flashcard to update", stackId);
-
-		var propertiesToUpdate = new Dictionary<string, object>();
-
-		if (Ansi)*/
 	}
 
 	private void DeleteFlashcard()

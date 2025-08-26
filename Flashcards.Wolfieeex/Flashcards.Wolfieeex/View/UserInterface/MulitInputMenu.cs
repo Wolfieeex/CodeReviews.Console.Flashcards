@@ -90,7 +90,7 @@ abstract public class MulitInputMenu : Menu
 			}
 			else
 			{
-				if (Enum.TryParse<InsertFlashcardSelection>(option.ToString(), out _))
+				if (Enum.TryParse<UpdateFlashcardSelection>(option.ToString(), out _))
 				{
 					return (GetDisplayName(option) + ": [#" + menuColors.Important2Color.ToHex() + "]" + dataAccess.GetStackName(int.Parse(inputs[option])) + "[/]").TrimEnd(':', ' ');
 				}
