@@ -69,7 +69,6 @@ internal class FlashcardMenu : Menu
 		}
 	}
 	
-
 	private void UpdateFlashcard()
 	{
 		UpdateFlashcardMenu addFlashcardMenu = new(menuColors.UserInputColor);
@@ -289,13 +288,13 @@ internal class FlashcardMenu : Menu
 			AnsiConsole.Write(table);
 			Console.WriteLine();
 
-			string displayText = userInput == FlashcardViewOptions.ViewAllFlashcards ? "flashcards" : dataAccess.GetStackName(stackId);
-			string markupText = $"Your {displayText} are displayed in the table above. Press any button to return to previous menu: ";
+			string displayText = userInput == FlashcardViewOptions.ViewAllFlashcards ? "flashcards" : dataAccess.GetStackName(stackId) + " flashcards";
+			string markupText = $"Your [#{menuColors.Important1Color.ToHex()}]{displayText}[/] are displayed in the table above. Press any button to return to previous menu: ";
 			int windowWidth = Console.WindowWidth;
 			int textStart = (windowWidth - markupText.Length) / 2;
 
 			Console.SetCursorPosition(textStart, Console.CursorTop);
-			AnsiConsole.Write(markupText);
+			AnsiConsole.Markup(markupText);
 			Console.ReadKey();
 			Console.Clear();
 		}

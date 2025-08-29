@@ -190,6 +190,7 @@ internal class UpdateFlashcardMenu : MulitInputMenu
 		return title;
 	}
 
+	// I would like to avoid repetition for the below 3 and inlude it in basic MultiInputMenu class. This relates to both update and add menus.
 	private void UpdateAnswer()
 	{
 		string tempAnswer = null;

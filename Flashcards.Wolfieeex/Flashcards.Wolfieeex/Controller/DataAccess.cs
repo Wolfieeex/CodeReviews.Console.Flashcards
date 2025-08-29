@@ -48,7 +48,24 @@ internal class DataAccess
 						ON UPDATE CASCADE
 					);";
                 conn.Execute(createFlashcardTableSql);
-            }
+
+				string createStudySessionTableSql =
+                     @"IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'StudySessions')
+                     CREATE TABLE StudySessions (
+                     Id int IDENTITY(1,1) NOT NULL PRIMARY KEY,
+                     Questions int NOT NULL,
+                     Date DateTime NOT NULL, 
+                     CorrectAnswers int NOT NULL,
+                     Percentage AS (CorrectAnswers * 100) / Questions PERSISTED,
+                     Time TIME NOT NULL,
+                     StackId int NOT NULL
+                     FOREIGN KEY 
+                     REFERENCES Stacks(Id)
+                     ON DELETE CASCADE 
+                     ON UPDATE CASCADE
+                     );";
+				conn.Execute(createStudySessionTableSql);
+			}
         }
         catch (Exception ex)
         {
@@ -170,7 +187,10 @@ internal class DataAccess
             {
                 connection.Open();
 
-                string dropFlashcardsTableSql = @"DROP TABLE Flashcards";
+				string dropStudyTableSql = @"DROP TABLE StudySessions";
+				connection.Execute(dropStudyTableSql);
+
+				string dropFlashcardsTableSql = @"DROP TABLE Flashcards";
                 connection.Execute(dropFlashcardsTableSql);
 
                 string dropStacksTableSql = @"DROP TABLE Stacks";
@@ -310,4 +330,23 @@ internal class DataAccess
             });
         }
     }
+
+    internal void InsertStudySession(StudySession session)
+    {
+        try
+        {
+            using (var connection = new SqlConnection(ConnectionString)) 
+            {
+                connection.Open();
+
+                string insertQuery = @"INSERT INTO StudySessions (Questions, CorrectAnswers, StackId, Time, Date) VALUES (@Questions, @CorrectAnswers, @StackId, @Time, @Date)";
+                connection.Execute(insertQuery, new { session.Questions, session.CorrectAnswers, session.StackId, session.Time, session.Date });
+            }           
+
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"There was a problem with the study session: {ex.Message}");
+		}
+	}
 }

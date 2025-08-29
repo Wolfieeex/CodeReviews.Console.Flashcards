@@ -234,7 +234,7 @@ internal class StacksMenu : Menu
 	}
 
 	/// <returns>Returns -1 if user returns to previous menu without selection.</returns>
-	private static int ChooseStack(string message, Color color, string emptyListMessage = null)
+	public static int ChooseStack(string message, Color color, string emptyListMessage = null)
 	{
 		var dataAccess = new DataAccess();
 		var stacks = dataAccess.GetAllStacks();

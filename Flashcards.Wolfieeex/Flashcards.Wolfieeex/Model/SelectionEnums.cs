@@ -13,7 +13,10 @@ internal class SelectionEnums
 		[Display(Name ="Manage Flashcards")]
 		ManageFlashcards,
 
-		[Display(Name ="Study Area")]
+		[Display(Name ="Study Session")]
+		StudySession,
+
+		[Display(Name = "Study History")]
 		StudyArea,
 
 		[Display(Name ="Quit")]

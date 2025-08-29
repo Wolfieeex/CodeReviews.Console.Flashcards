@@ -25,24 +25,7 @@ internal class AddFlashcardMenu : MulitInputMenu
 
 			string title = "Choose options to insert your new Flashcard:";
 
-			if (inputs.ContainsKey(MultiInputMenuEnums.InsertFlashcardSelection.ChooseQuestion)
-				&& inputs.ContainsKey(MultiInputMenuEnums.InsertFlashcardSelection.ChooseStack))
-			{
-				if (!Input.FlashcardDataBaseRepetitionCheck(inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseStack],
-						inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseQuestion]))
-				{
-					repetitionCheckFail = true;
-					title = $"The Flashcard with question [#{menuColors.Important3Color.ToHex()}]\"" +
-					$"{inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseQuestion]}\"[/] in stack " +
-					$"[#{menuColors.Important1Color.ToHex()}]\"" +
-					$"{dataAccess.GetStackName(int.Parse(inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseStack]))}\"[/] already exists." +
-					$" Choose a different question: ";
-				}
-				else
-				{
-					repetitionCheckFail = false;
-				}
-			}
+			CheckForRepetitions(ref title);
 
 			var userInput = AnsiConsole.Prompt(new SelectionPrompt<Enum>()
 				.Title(title)
@@ -51,8 +34,6 @@ internal class AddFlashcardMenu : MulitInputMenu
 				.HighlightStyle(style)
 				.WrapAround()
 				);
-
-
 
 			switch (userInput)
 			{
@@ -128,6 +109,28 @@ internal class AddFlashcardMenu : MulitInputMenu
 
 				default:
 					throw new UnauthorizedAccessException("Insert Flashcard Selection option not recognised.");
+			}
+		}
+	}
+
+	private void CheckForRepetitions(ref string title)
+	{
+		if (inputs.ContainsKey(MultiInputMenuEnums.InsertFlashcardSelection.ChooseQuestion)
+						&& inputs.ContainsKey(MultiInputMenuEnums.InsertFlashcardSelection.ChooseStack))
+		{
+			if (!Input.FlashcardDataBaseRepetitionCheck(inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseStack],
+					inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseQuestion]))
+			{
+				repetitionCheckFail = true;
+				title = $"The Flashcard with question [#{menuColors.Important3Color.ToHex()}]\"" +
+				$"{inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseQuestion]}\"[/] in stack " +
+				$"[#{menuColors.Important1Color.ToHex()}]\"" +
+				$"{dataAccess.GetStackName(int.Parse(inputs[MultiInputMenuEnums.InsertFlashcardSelection.ChooseStack]))}\"[/] already exists." +
+				$" Choose a different question: ";
+			}
+			else
+			{
+				repetitionCheckFail = false;
 			}
 		}
 	}

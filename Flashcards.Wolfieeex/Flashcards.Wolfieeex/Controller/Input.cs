@@ -41,23 +41,11 @@ internal class Input
 
 			switch (type)
 			{
-				case ValidationType.Any:
-					ValidateAny();
-					break;
 				case ValidationType.AnyNonBlank:
 					ValidateAnyNonBlank();
 					break;
 				case ValidationType.Text:
 					ValidateText();
-					break;
-				case ValidationType.Integer:
-					ValidateInteger();
-					break;
-				case ValidationType.DateTime:
-					ValidateDateTime();
-					break;
-				case ValidationType.TimeSpan:
-					ValidateTimeSpan();
 					break;
 			}
 
@@ -101,26 +89,6 @@ internal class Input
 			Input.input = input;
 			break;
 		} 
-	}
-
-	private static void ValidateTimeSpan()
-	{
-		throw new NotImplementedException();
-	}
-
-	private static void ValidateAny()
-	{
-		throw new NotImplementedException();
-	}
-
-	private static void ValidateDateTime()
-	{
-		throw new NotImplementedException();
-	}
-
-	private static void ValidateInteger()
-	{
-		throw new NotImplementedException();
 	}
 
 	private static void ValidateText()
