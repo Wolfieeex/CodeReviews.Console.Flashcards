@@ -17,7 +17,7 @@ internal class SelectionEnums
 		StudySession,
 
 		[Display(Name = "Study History")]
-		StudyArea,
+		StudyHistory,
 
 		[Display(Name ="Quit")]
 		Quit

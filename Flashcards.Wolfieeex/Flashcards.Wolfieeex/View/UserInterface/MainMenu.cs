@@ -44,6 +44,9 @@ public class MainMenu : Menu
 					StudySessionMenu studySessionMenu = new StudySessionMenu(Color.Purple3);
 					studySessionMenu.DisplayMenu();
 					break;
+				case MainMenuChoices.StudyHistory:
+					ViewStudySessions.ViewStudyHistory();
+					break;
 				case MainMenuChoices.Quit:
 					System.Console.Clear();
 					AnsiConsole.Write(new Markup("Thank you for using this app. [#00ffff]See you soon! :D[/]", style: new Style(decoration: Decoration.RapidBlink)).Justify(Justify.Center));

@@ -73,7 +73,31 @@ internal class DataAccess
         }
     }
 
-    internal void InsertStack(Stack stack)
+	internal List<StudySessionDTO> GetStudySessionData()
+	{
+		using (var connection = new SqlConnection(ConnectionString))
+		{
+			connection.Open();
+
+            string sql = @"
+                         SELECT
+                             s.Name as StackName,
+                             ss.Date,
+                             ss.Questions,
+                             ss.CorrectAnswers,
+                             ss.Percentage,
+                             ss.Time
+                         FROM
+                             StudySessions ss
+                         INNER JOIN
+                             Stacks s ON ss.StackId = s.Id";
+                     
+
+			return connection.Query<StudySessionDTO>(sql).ToList();
+		}
+	}
+
+	internal void InsertStack(Stack stack)
     {
         try
         {
