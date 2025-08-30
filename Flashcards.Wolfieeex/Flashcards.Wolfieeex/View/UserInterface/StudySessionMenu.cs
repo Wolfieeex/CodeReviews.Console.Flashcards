@@ -13,7 +13,7 @@ internal class StudySessionMenu : Menu
 	public override void DisplayMenu()
 	{
 		bool menuRunning = true;
-		if (menuRunning)
+		while (menuRunning)
 		{
 			Console.Clear();
 			int stackId = StacksMenu.ChooseStack("Select stack you want to study:", menuColors.TitleColor,
@@ -70,10 +70,12 @@ internal class StudySessionMenu : Menu
 							if (finishedCards == 0)
 							{
 								Console.Clear();
-								return;
+								stackSelected = false;
+								break;
 							}
 							FinishSession(finishedCards, false);
-							return;
+							stackSelected = false;
+							break;
 						}
 					}
 
@@ -95,8 +97,11 @@ internal class StudySessionMenu : Menu
 					shuffledFlashcards.RemoveAt(0);
 				}
 
-				FinishSession(studySession.Questions, true);
-				stackSelected = false;
+				if (stackSelected)
+				{
+					FinishSession(studySession.Questions, true);
+					stackSelected = false;
+				}
 			}
 		}
 	}
@@ -109,7 +114,7 @@ internal class StudySessionMenu : Menu
 
 		dataAccess.InsertStudySession(studySession);
 		AnsiConsole.Markup($"You have finished your [#{menuColors.Important1Color.ToHex()}]{dataAccess.GetStackName(studySession.StackId)}[/] study session {(isFullSession ? "" : "early ")}" +
-			$"and you scored [#{menuColors.PositiveColor.ToHex()}]{studySession.CorrectAnswers}/{questions} ({Math.Round((double)studySession.CorrectAnswers / questions * 10000) / 100}% correct)[/]. Press any key to return to the previous menu: ");
+			$"and you scored [#{menuColors.Important3Color.ToHex()}]{studySession.CorrectAnswers}/{questions} ({Math.Round((double)studySession.CorrectAnswers / questions * 10000) / 100}% correct)[/]. Press any key to return to the previous menu: ");
 		Console.ReadKey();
 		Console.Clear();
 	}
