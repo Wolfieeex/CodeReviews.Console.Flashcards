@@ -1,4 +1,6 @@
-﻿using Flashcards.Wolfieeex.Model;
+﻿using Flashcards.Wolfieeex.Controller;
+using Flashcards.Wolfieeex.Model;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Spectre.Console;
 using System.Collections.Immutable;
 using static Flashcards.Wolfieeex.Model.InputValidationEnums;
@@ -8,6 +10,9 @@ namespace Flashcards.Wolfieeex.View.UserInterface;
 
 abstract public class MulitInputMenu : Menu
 {
+	protected Flashcard Flashcard { get; set; } = new();
+	internal DataAccess dataAccess { get; private set; } = new();
+
 	protected Type _selectionType;
 	protected bool repetitionCheckFail = false;
 	protected Dictionary<Enum, string> inputs = new Dictionary<Enum, string>();
@@ -81,8 +86,6 @@ abstract public class MulitInputMenu : Menu
 
 	protected string SmartOptionConverter(Enum option, Flashcard flashcard = null)
 	{
-		DataAccess dataAccess = new DataAccess();
-
 		if (inputs.ContainsKey(option))
 			if (!int.TryParse(inputs[option], out _))
 			{
@@ -118,5 +121,51 @@ abstract public class MulitInputMenu : Menu
 		}
 		else
 			return GetDisplayName(option);
+	}
+
+	protected string AddToInputs(Enum key, string inputPointer)
+	{
+		if (key.ToString().ToLower().Contains("stack"))
+		{
+			int tempId = FlashcardMenu.ChooseStack(GetDescription(key), menuColors.Important2Color);
+			if (tempId > 0)
+			{
+				if (inputs.ContainsKey(key))
+				{
+					inputs[key] = tempId.ToString();
+					inputPointer = tempId.ToString();
+				}
+				else
+				{
+					inputs.Add(key, tempId.ToString());
+					inputPointer = tempId.ToString();
+				}
+			}
+			return tempId.ToString();
+		}
+		else
+		{
+			string tempQuestion = null;
+			Input.ValidateInput(ref tempQuestion, GetDescription(key), ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
+			if (tempQuestion == "")
+			{
+				inputs.Remove(key);
+				inputPointer = null;
+			}
+			else if (tempQuestion != null)
+			{
+				if (inputs.ContainsKey(key))
+				{
+					inputs[key] = tempQuestion;
+					inputPointer = tempQuestion;
+				}
+				else
+				{
+					inputs.Add(key, tempQuestion);
+					inputPointer = tempQuestion;
+				}
+			}
+			return inputPointer;
+		}
 	}
 }

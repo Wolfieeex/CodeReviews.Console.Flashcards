@@ -8,9 +8,8 @@ namespace Flashcards.Wolfieeex.View.UserInterface;
 
 internal class UpdateFlashcardMenu : MulitInputMenu
 {
-	public Flashcard Flashcard { get; private set; } = new();
+	
 	public Flashcard oldFlashcardData { get; private set; }
-	public DataAccess dataAccess { get; private set; } = new();
 
 	public UpdateFlashcardMenu(Color color) : base(color)
 	{
@@ -75,7 +74,7 @@ internal class UpdateFlashcardMenu : MulitInputMenu
 
 							foreach (var prop in properties)
 							{
-								if (prop.GetValue(Flashcard, null) != null && prop.Name != "Id")
+								if (prop.GetValue(Flashcard, null) != null && prop.Name != "Id" && !(prop.GetValue(Flashcard, null) is int && (int)(prop.GetValue(Flashcard, null)) == 0))
 								{
 									dic.Add(prop.Name, prop.GetValue(Flashcard, null));
 								}
@@ -94,15 +93,17 @@ internal class UpdateFlashcardMenu : MulitInputMenu
 							continue;
 
 						case UpdateFlashcardSelection.UpdateAnswer:
-							UpdateAnswer();
+							Flashcard.Answer = AddToInputs(UpdateFlashcardSelection.UpdateAnswer, Flashcard.Answer);
 							break;
 
 						case UpdateFlashcardSelection.UpdateQuestion:
-							UpdateQuestion();
+							Flashcard.Question = AddToInputs(UpdateFlashcardSelection.UpdateQuestion, Flashcard.Question);
 							break;
 
 						case UpdateFlashcardSelection.UpdateStack:
-							UpdateStack();
+							int tempId = int.Parse(AddToInputs(UpdateFlashcardSelection.UpdateStack, Flashcard.StackId.ToString()));
+							if (tempId > 0)
+								Flashcard.StackId = tempId; 
 							break;
 
 						default:
@@ -140,10 +141,10 @@ internal class UpdateFlashcardMenu : MulitInputMenu
 
 	private string RepetitionChecker(string title)
 	{
-		if (inputs.Count > 0)
+		if (inputs.Count() > 0)
 		{
 			string currentQuestion = "";
-			string currentAnwer = "";
+			string currentAnswer = "";
 			int currentStack = -1;
 
 			if (inputs.ContainsKey(MultiInputMenuEnums.UpdateFlashcardSelection.UpdateQuestion))
@@ -156,11 +157,11 @@ internal class UpdateFlashcardMenu : MulitInputMenu
 			}
 			if (inputs.ContainsKey(MultiInputMenuEnums.UpdateFlashcardSelection.UpdateAnswer))
 			{
-				currentAnwer = inputs[MultiInputMenuEnums.UpdateFlashcardSelection.UpdateAnswer];
+				currentAnswer = inputs[MultiInputMenuEnums.UpdateFlashcardSelection.UpdateAnswer];
 			}
 			else
 			{
-				currentAnwer = oldFlashcardData.Answer;
+				currentAnswer = oldFlashcardData.Answer;
 			}
 			if (inputs.ContainsKey(MultiInputMenuEnums.UpdateFlashcardSelection.UpdateStack))
 			{
@@ -172,7 +173,7 @@ internal class UpdateFlashcardMenu : MulitInputMenu
 			}
 
 
-			if (!Input.FlashcardDataBaseRepetitionCheck(currentStack.ToString(), currentQuestion))
+			if (!Input.FlashcardDataBaseRepetitionCheck(currentStack.ToString(), currentQuestion) && inputs.ContainsKey(MultiInputMenuEnums.UpdateFlashcardSelection.UpdateStack))
 			{
 				repetitionCheckFail = true;
 				title = $"The Flashcard with question [#{menuColors.Important3Color.ToHex()}]\"" +
@@ -188,72 +189,5 @@ internal class UpdateFlashcardMenu : MulitInputMenu
 		}
 
 		return title;
-	}
-
-	// I would like to avoid repetition for the below 3 and inlude it in basic MultiInputMenu class. This relates to both update and add menus.
-	private void UpdateAnswer()
-	{
-		string tempAnswer = null;
-		Input.ValidateInput(ref tempAnswer, GetDescription(UpdateFlashcardSelection.UpdateAnswer), ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
-		if (tempAnswer == "")
-		{
-			inputs.Remove(UpdateFlashcardSelection.UpdateAnswer);
-			Flashcard.Answer = null;
-		}
-		else if (tempAnswer != null)
-		{
-			if (inputs.ContainsKey(UpdateFlashcardSelection.UpdateAnswer))
-			{
-				inputs[UpdateFlashcardSelection.UpdateAnswer] = tempAnswer;
-				Flashcard.Answer = tempAnswer;
-			}
-			else
-			{
-				inputs.Add(UpdateFlashcardSelection.UpdateAnswer, tempAnswer);
-				Flashcard.Answer = tempAnswer;
-			}
-		}
-	}
-
-	private void UpdateQuestion()
-	{
-		string tempQuestion = null;
-		Input.ValidateInput(ref tempQuestion, GetDescription(UpdateFlashcardSelection.UpdateQuestion), ValidationType.AnyNonBlank, menuColors, BackOptions.ExitBlank);
-		if (tempQuestion == "")
-		{
-			inputs.Remove(UpdateFlashcardSelection.UpdateQuestion);
-			Flashcard.Question = null;
-		}
-		else if (tempQuestion != null)
-		{
-			if (inputs.ContainsKey(UpdateFlashcardSelection.UpdateQuestion))
-			{
-				inputs[UpdateFlashcardSelection.UpdateQuestion] = tempQuestion;
-				Flashcard.Question = tempQuestion;
-			}
-			else
-			{
-				inputs.Add(UpdateFlashcardSelection.UpdateQuestion, tempQuestion);
-				Flashcard.Question = tempQuestion;
-			}
-		}
-	}
-
-	private void UpdateStack()
-	{
-		int tempId = FlashcardMenu.ChooseStack(GetDescription(UpdateFlashcardSelection.UpdateStack), menuColors.Important2Color);
-		if (tempId != -1)
-		{
-			if (inputs.ContainsKey(UpdateFlashcardSelection.UpdateStack))
-			{
-				inputs[UpdateFlashcardSelection.UpdateStack] = tempId.ToString();
-				Flashcard.StackId = tempId;
-			}
-			else
-			{
-				inputs.Add(UpdateFlashcardSelection.UpdateStack, tempId.ToString());
-				Flashcard.StackId = tempId;
-			}
-		}
 	}
 }

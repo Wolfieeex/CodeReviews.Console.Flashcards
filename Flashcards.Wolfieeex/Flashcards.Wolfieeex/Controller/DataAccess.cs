@@ -132,7 +132,27 @@ internal class DataAccess
         }
     }
 
-    internal void InsertFlashcard(Flashcard flashcard)
+	internal IEnumerable<Flashcard> GetAllFlashcards()
+	{
+		try
+		{
+			using (var connection = new SqlConnection(ConnectionString))
+			{
+				connection.Open();
+
+				string selectQuery = "SELECT * FROM Flashcards";
+                var records = connection.Query<Flashcard>(selectQuery);
+				return records;
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"There was a problem while retrieving your flashcards: {ex.Message}");
+			return new List<Flashcard>();
+		}
+	}
+
+	internal void InsertFlashcard(Flashcard flashcard)
     {
         try
         {

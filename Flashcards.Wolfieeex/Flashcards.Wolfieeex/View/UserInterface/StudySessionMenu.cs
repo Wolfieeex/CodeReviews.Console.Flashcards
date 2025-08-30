@@ -7,6 +7,7 @@ namespace Flashcards.Wolfieeex.View.UserInterface;
 internal class StudySessionMenu : Menu
 {
 	DataAccess dataAccess = new DataAccess();
+	StudySession studySession = new();
 	public StudySessionMenu(Color color) : base(color) { }
 
 	public override void DisplayMenu()
@@ -39,11 +40,12 @@ internal class StudySessionMenu : Menu
 				Random random = new Random();
 				var shuffledFlashcards = flashcards.OrderBy(x => random.Next()).ToList();
 
-				StudySession studySession = new StudySession();
+				studySession = new StudySession();
 				studySession.Questions = shuffledFlashcards.Count();
 				studySession.Date = DateTime.Now;
 				studySession.StackId = stackId;
 				studySession.CorrectAnswers = 0;
+				int finishedCards = 0;
 
 				while (shuffledFlashcards.Count() > 0)
 				{
@@ -54,17 +56,23 @@ internal class StudySessionMenu : Menu
 					Input.ValidateInput(ref input, $"Translate [#{menuColors.Important2Color.ToHex()}]{flashc.Question}[/]:"
 						, InputValidationEnums.ValidationType.AnyNonBlank, menuColors, InputValidationEnums.BackOptions.Exit);
 
-					if (input.ToLower() == "e")
+					if (input.ToLower() == "")
 					{
 						Console.Clear();
-						if (!AnsiConsole.Confirm("Are you sure you want to end your study session? Your progress will still be added to the study history table:"))
+						string anyProgress = finishedCards > 0 ? " Your progress will still be added to the study history table" : "";
+						if (!AnsiConsole.Confirm($"Are you sure you want to end your study session?{anyProgress}:"))
 						{
 							Console.Clear();
 							continue;
 						}
 						else
 						{
-							// Finish session here
+							if (finishedCards == 0)
+							{
+								Console.Clear();
+								return;
+							}
+							FinishSession(finishedCards, false);
 							return;
 						}
 					}
@@ -83,13 +91,26 @@ internal class StudySessionMenu : Menu
 						Console.Clear();
 					}
 
-
+					finishedCards++;
 					shuffledFlashcards.RemoveAt(0);
 				}
 
-				//	Give score and update session to history
+				FinishSession(studySession.Questions, true);
 				stackSelected = false;
 			}
 		}
+	}
+
+	private void FinishSession(int questions, bool isFullSession)
+	{
+		Console.Clear();
+
+		studySession.Time = DateTime.Now - studySession.Date;
+
+		dataAccess.InsertStudySession(studySession);
+		AnsiConsole.Markup($"You have finished your [#{menuColors.Important1Color.ToHex()}]{dataAccess.GetStackName(studySession.StackId)}[/] study session {(isFullSession ? "" : "early ")}" +
+			$"and you scored [#{menuColors.PositiveColor.ToHex()}]{studySession.CorrectAnswers}/{questions} ({Math.Round((double)studySession.CorrectAnswers / questions * 10000) / 100}% correct)[/]. Press any key to return to the previous menu: ");
+		Console.ReadKey();
+		Console.Clear();
 	}
 }
