@@ -73,6 +73,7 @@ internal class StudySessionMenu : Menu
 								stackSelected = false;
 								break;
 							}
+							studySession.Questions = finishedCards;
 							FinishSession(finishedCards, false);
 							stackSelected = false;
 							break;

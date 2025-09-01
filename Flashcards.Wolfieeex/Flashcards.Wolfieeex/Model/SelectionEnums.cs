@@ -19,6 +19,9 @@ internal class SelectionEnums
 		[Display(Name = "Study History")]
 		StudyHistory,
 
+		[Display(Name = "Your Reports")]
+		YourReports,
+
 		[Display(Name ="Quit")]
 		Quit
 	}

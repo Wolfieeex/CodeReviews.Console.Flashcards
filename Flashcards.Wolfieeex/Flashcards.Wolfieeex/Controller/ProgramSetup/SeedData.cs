@@ -17,11 +17,11 @@ internal class SeedData
 
 		List<Flashcard> flashcards = new()
 		{
-			new Flashcard { StackId = 1, Question = "Oui", Answer = "Hi" },
-			new Flashcard { StackId = 2, Question = "Ciao", Answer = "Hello" },
+			new Flashcard { StackId = 1, Question = "Oui", Answer = "Yes" },
+			new Flashcard { StackId = 2, Question = "Ciao", Answer = "Hi" },
 			new Flashcard { StackId = 3, Question = "Ja", Answer = "Yes" },
 			new Flashcard { StackId = 4, Question = "Nein", Answer = "No" },
-			new Flashcard { StackId = 5, Question = "Hola", Answer = "Hello" },
+			new Flashcard { StackId = 5, Question = "Hola", Answer = "Hi" },
 			new Flashcard { StackId = 1, Question = "Bonjour", Answer = "Good morning" },
 			new Flashcard { StackId = 2, Question = "Buongiorno", Answer = "Good morning" },
 			new Flashcard { StackId = 3, Question = "God morgen", Answer = "Good morning" },

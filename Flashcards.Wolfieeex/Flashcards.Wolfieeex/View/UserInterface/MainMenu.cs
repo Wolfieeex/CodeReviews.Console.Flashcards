@@ -45,7 +45,11 @@ public class MainMenu : Menu
 					studySessionMenu.DisplayMenu();
 					break;
 				case MainMenuChoices.StudyHistory:
-					ViewStudySessions.ViewStudyHistory();
+					ViewStudySessions studySession = new ViewStudySessions(Color.Aquamarine1_1);
+					studySession.DisplayMenu();
+					break;
+				case MainMenuChoices.YourReports:
+
 					break;
 				case MainMenuChoices.Quit:
 					System.Console.Clear();
