@@ -1,17 +1,18 @@
 ﻿using Flashcards.Wolfieeex.Controller;
 using Flashcards.Wolfieeex.Model;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Spectre.Console;
 using System.Collections.Immutable;
 using static Flashcards.Wolfieeex.Model.InputValidationEnums;
 using static Flashcards.Wolfieeex.Model.MultiInputMenuEnums;
+using Flashcards.Wolfieeex.Controller.DataAccess;
+
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 
 abstract public class MultiInputMenu : Menu
 {
 	protected Flashcard Flashcard { get; set; } = new();
-	internal DataAccess dataAccess { get; private set; } = new();
+	internal DataAccessor dataAccess { get; private set; } = new();
 
 	protected Type _selectionType;
 	protected bool repetitionCheckFail = false;

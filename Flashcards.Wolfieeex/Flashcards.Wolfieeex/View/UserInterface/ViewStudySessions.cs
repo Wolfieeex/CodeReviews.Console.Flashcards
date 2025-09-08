@@ -1,4 +1,5 @@
 ﻿using Spectre.Console;
+using Flashcards.Wolfieeex.Controller.DataAccess;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 
@@ -7,7 +8,7 @@ internal class ViewStudySessions : Menu
 	public ViewStudySessions(Color color) : base(color) { }
 	public override void DisplayMenu()
 	{
-		var dataAccess = new DataAccess();
+		var dataAccess = new DataAccessor();
 		var sessions = dataAccess.GetStudySessionData();
 
 		Console.Clear();

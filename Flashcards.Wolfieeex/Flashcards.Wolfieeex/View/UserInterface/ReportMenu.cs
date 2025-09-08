@@ -1,8 +1,8 @@
 ﻿using Flashcards.Wolfieeex.Model;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Spectre.Console;
 using System.ComponentModel;
 using static Flashcards.Wolfieeex.Model.MultiInputMenuEnums;
+using Flashcards.Wolfieeex.Controller.DataAccess;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 enum DisplayOptions
@@ -53,7 +53,7 @@ internal class ReportMenu : MultiInputMenu
 	{
 		_selectionType = typeof(MultiInputMenuEnums.ReportingMenuOptions);
 	}
-	DataAccess dataAccess = new DataAccess();
+	DataAccessor dataAccess = new DataAccessor();
 	private ReportSettings reportSettings = new ReportSettings();
 
 	protected override void MenuRunningLoop()

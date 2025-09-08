@@ -1,8 +1,7 @@
 ﻿using Flashcards.Wolfieeex.Controller;
 using Flashcards.Wolfieeex.Model;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Spectre.Console;
-using System.Text.RegularExpressions;
+using Flashcards.Wolfieeex.Controller.DataAccess;
 using static Flashcards.Wolfieeex.Model.InputValidationEnums;
 using static Flashcards.Wolfieeex.Model.SelectionEnums;
 
@@ -103,7 +102,7 @@ internal class StacksMenu : Menu
 				continue;
 			}
 
-			var dataAccess = new DataAccess();
+			var dataAccess = new DataAccessor();
 
 			string oldName = dataAccess.GetStackName(id);
 
@@ -130,7 +129,7 @@ internal class StacksMenu : Menu
 				Console.Clear();
 				continue;
 			}
-			var dataAccess = new DataAccess();
+			var dataAccess = new DataAccessor();
 
 			string stackName = dataAccess.GetStackName(id);
 
@@ -170,7 +169,7 @@ internal class StacksMenu : Menu
 
 		stack.Name = dummyName;
 
-		var dataAccess = new DataAccess();
+		var dataAccess = new DataAccessor();
 		dataAccess.InsertStack(stack);
 
 		Console.Clear();
@@ -183,7 +182,7 @@ internal class StacksMenu : Menu
 	{
 		Console.Clear(); 
 
-		var dataAccess = new DataAccess();
+		var dataAccess = new DataAccessor();
 		var stacks = dataAccess.GetAllStacks();
 
 		if (stacks.Count() == 0)
@@ -236,7 +235,7 @@ internal class StacksMenu : Menu
 	/// <returns>Returns -1 if user returns to previous menu without selection.</returns>
 	public static int ChooseStack(string message, Color color, string emptyListMessage = null)
 	{
-		var dataAccess = new DataAccess();
+		var dataAccess = new DataAccessor();
 		var stacks = dataAccess.GetAllStacks();
 
 		var stacksArray = stacks.Select(x => x.Name).ToArray();

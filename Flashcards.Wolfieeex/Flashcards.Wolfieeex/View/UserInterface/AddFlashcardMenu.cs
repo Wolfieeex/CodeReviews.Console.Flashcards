@@ -3,13 +3,15 @@ using Flashcards.Wolfieeex.Model;
 using Spectre.Console;
 using static Flashcards.Wolfieeex.Model.InputValidationEnums;
 using static Flashcards.Wolfieeex.Model.MultiInputMenuEnums;
+using Flashcards.Wolfieeex.Controller.DataAccess;
+
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 
 internal class AddFlashcardMenu : MultiInputMenu
 {
 	public Flashcard Flashcard { get; private set; } = new();
-	public DataAccess dataAccess { get; private set; } = new();
+	public DataAccessor dataAccess { get; private set; } = new();
 
 	public AddFlashcardMenu(Color color) : base(color)
 	{

@@ -1,8 +1,9 @@
-﻿using Flashcards.Wolfieeex.Model;
-using Spectre.Console;
+﻿using Spectre.Console;
 using System.Text.RegularExpressions;
 using static Flashcards.Wolfieeex.Model.InputValidationEnums;
 using static Flashcards.Wolfieeex.View.UserInterface.Menu;
+using Flashcards.Wolfieeex.Controller.DataAccess;
+
 
 namespace Flashcards.Wolfieeex.Controller;
 
@@ -190,7 +191,7 @@ internal class Input
 
 	internal static bool StackDatabaseRepetitionCheck(string input)
 	{
-		DataAccess dataAccess = new DataAccess();
+		DataAccessor dataAccess = new DataAccessor();
 		var stacks = dataAccess.GetAllStacks();
 
 		var arrayOfStacks = stacks.Select(x => x.Name).ToArray();
@@ -205,7 +206,7 @@ internal class Input
 
 	internal static bool FlashcardDataBaseRepetitionCheck(string id, string input)
 	{
-		DataAccess data = new DataAccess();
+		DataAccessor data = new DataAccessor();
 
 		var flashcards = data.GetAllFlashcards(int.Parse(id));
 

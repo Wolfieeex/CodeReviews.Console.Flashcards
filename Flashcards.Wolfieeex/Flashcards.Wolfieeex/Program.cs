@@ -1,9 +1,10 @@
-﻿using Flashcards.Wolfieeex.Controller.ProgramSetup;
+﻿using Flashcards.Wolfieeex.Controller.DataAccess;
+using Flashcards.Wolfieeex.Controller.ProgramSetup;
 using Flashcards.Wolfieeex.View.UserInterface;
 
-var DataAccess = new DataAccess();
-DataAccess.DeleteTables();
-DataAccess.CreateTables();
+var DataAccessor = new DataAccessor();
+DataAccessor.DeleteTables();
+DataAccessor.CreateTables();
 SeedData.SeedRecords();
 MainMenu mainMenu = new();
 mainMenu.DisplayMenu();

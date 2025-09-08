@@ -1,7 +1,8 @@
 ﻿using Flashcards.Wolfieeex.Model;
 using Spectre.Console;
-using System;
 using static Flashcards.Wolfieeex.Model.SelectionEnums;
+using Flashcards.Wolfieeex.Controller.DataAccess;
+
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 
@@ -18,7 +19,7 @@ internal class FlashcardMenu : Menu
 		bool IsMenuRunning = true;
 		while (IsMenuRunning)
 		{
-			DataAccess dataAccess = new DataAccess();
+			DataAccessor dataAccess = new DataAccessor();
 			var stacks = dataAccess.GetAllStacks();
 			if (stacks.Count() == 0)
 			{
@@ -90,7 +91,7 @@ internal class FlashcardMenu : Menu
 			bool stackSelectedMenu = true;
 			while (stackSelectedMenu)
 			{
-				var dataAccess = new DataAccess();
+				var dataAccess = new DataAccessor();
 
 				var flashcard = ChooseFlashcard("Choose flashcard you want to delete: ", stackId, 
 					menuColors.Important1Color,
@@ -143,7 +144,7 @@ internal class FlashcardMenu : Menu
 			if (addFlashcardMenu.Flashcard == null)
 				return;
 
-			var dataAccess = new DataAccess();
+			var dataAccess = new DataAccessor();
 			dataAccess.InsertFlashcard(addFlashcardMenu.Flashcard);
 
 			Console.Clear();
@@ -159,7 +160,7 @@ internal class FlashcardMenu : Menu
 
 	public static int ChooseStack(string message, Color color, string emptyListMessage = null)
 	{
-		var dataAccess = new DataAccess();
+		var dataAccess = new DataAccessor();
 		var stacks = dataAccess.GetAllStacks();
 
 		var stacksArray = stacks.Select(x => x.Name).ToArray();
@@ -183,7 +184,7 @@ internal class FlashcardMenu : Menu
 	/// <returns>Returns -1 if user returns to previous menu without selection.</returns>
 	public static int ChooseFlashcard(string message, int stackId, Color color, string emptyListMessage = null)
 	{
-		var dataAccess = new DataAccess();
+		var dataAccess = new DataAccessor();
 		var flashcards = dataAccess.GetAllFlashcards(stackId);
 
 		var flashcardsArray = flashcards.Select(x => x.Question).ToArray();
@@ -206,7 +207,7 @@ internal class FlashcardMenu : Menu
 
 	private void ViewFlashcards()
 	{
-		DataAccess dataAccess = new DataAccess();
+		DataAccessor dataAccess = new DataAccessor();
 		int stackId = 0;
 
 		bool viewFlashcardsMenuRunning = true;

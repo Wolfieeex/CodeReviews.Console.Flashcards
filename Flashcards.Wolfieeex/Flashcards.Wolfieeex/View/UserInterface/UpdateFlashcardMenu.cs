@@ -1,7 +1,7 @@
 ﻿using Flashcards.Wolfieeex.Controller;
 using Flashcards.Wolfieeex.Model;
 using Spectre.Console;
-using static Flashcards.Wolfieeex.Model.InputValidationEnums;
+using Flashcards.Wolfieeex.Controller.DataAccess;
 using static Flashcards.Wolfieeex.Model.MultiInputMenuEnums;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
@@ -18,7 +18,7 @@ internal class UpdateFlashcardMenu : MultiInputMenu
 
 	protected override void MenuRunningLoop()
 	{
-		DataAccess dataAccess = new DataAccess();
+		DataAccessor dataAccess = new DataAccessor();
 
 		bool updateFlashcardLoop = true;
 		while (updateFlashcardLoop)

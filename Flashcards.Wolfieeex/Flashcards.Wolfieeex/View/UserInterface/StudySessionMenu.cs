@@ -1,12 +1,13 @@
 ﻿using Spectre.Console;
 using Flashcards.Wolfieeex.Model;
 using Flashcards.Wolfieeex.Controller;
+using Flashcards.Wolfieeex.Controller.DataAccess;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 
 internal class StudySessionMenu : Menu
 {
-	DataAccess dataAccess = new DataAccess();
+	DataAccessor dataAccess = new DataAccessor();
 	StudySession studySession = new();
 	public StudySessionMenu(Color color) : base(color) { }
 

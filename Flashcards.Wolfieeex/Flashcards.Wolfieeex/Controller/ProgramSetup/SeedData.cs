@@ -1,4 +1,5 @@
 ﻿using Flashcards.Wolfieeex.Model;
+using Flashcards.Wolfieeex.Controller.DataAccess;
 
 namespace Flashcards.Wolfieeex.Controller.ProgramSetup;
 
@@ -34,7 +35,7 @@ internal class SeedData
 			new Flashcard { StackId = 5, Question = "Gracias", Answer = "Thank you" }
 		};
 
-		var dataAccess = new DataAccess();
+		var dataAccess = new DataAccessor();
 		dataAccess.BulkInsertRecords(stacks, flashcards);
 	}
 }
