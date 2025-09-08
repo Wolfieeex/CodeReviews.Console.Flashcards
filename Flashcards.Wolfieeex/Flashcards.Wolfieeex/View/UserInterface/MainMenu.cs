@@ -49,7 +49,8 @@ public class MainMenu : Menu
 					studySession.DisplayMenu();
 					break;
 				case MainMenuChoices.YourReports:
-
+					ReportMenu reportMenu = new ReportMenu(Color.Pink3);
+					reportMenu.DisplayMenu();
 					break;
 				case MainMenuChoices.Quit:
 					System.Console.Clear();

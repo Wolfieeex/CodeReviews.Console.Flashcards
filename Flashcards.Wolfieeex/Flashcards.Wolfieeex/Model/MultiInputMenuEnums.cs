@@ -56,4 +56,30 @@ internal class MultiInputMenuEnums
 		[EnumLabelSpecialLabel(SpecialLabels.OneOf)]
 		UpdateStack,
 	}
+
+	public enum ReportingMenuOptions
+	{
+		[Display(Name = "Confirm")]
+		[EnumLabelSpecialLabel(SpecialLabels.Confirm)]
+		Confirm,
+
+		[Display(Name = "Return to the main menu")]
+		[EnumLabelSpecialLabel(SpecialLabels.Quit)]
+		Return,
+
+		[Description("Select what do you want to report:")]
+		[Display(Name = "")]
+		[EnumLabelSpecialLabel(SpecialLabels.NonOptional)]
+		ReportOutput,
+
+		[Description("Select by which period you want to display your data: ")]
+		[Display(Name = "Report average percentage of your sessions")]
+		[EnumLabelSpecialLabel(SpecialLabels.NonOptional)]
+		PeriodSelection,
+
+		[Description("Do you want to hide columns with no data?: ")]
+		[Display(Name = "Display Settings")]
+		[EnumLabelSpecialLabel(SpecialLabels.NonOptional)]
+		Display,
+	}
 }

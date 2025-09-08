@@ -8,7 +8,7 @@ using static Flashcards.Wolfieeex.Model.MultiInputMenuEnums;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 
-abstract public class MulitInputMenu : Menu
+abstract public class MultiInputMenu : Menu
 {
 	protected Flashcard Flashcard { get; set; } = new();
 	internal DataAccess dataAccess { get; private set; } = new();
@@ -17,7 +17,7 @@ abstract public class MulitInputMenu : Menu
 	protected bool repetitionCheckFail = false;
 	protected Dictionary<Enum, string> inputs = new Dictionary<Enum, string>();
 
-	public MulitInputMenu(Color color) : base(color) {}
+	public MultiInputMenu(Color color) : base(color) {}
 
 	public sealed override void DisplayMenu()
 	{
@@ -123,7 +123,7 @@ abstract public class MulitInputMenu : Menu
 			return GetDisplayName(option);
 	}
 
-	protected string AddToInputs(Enum key, string inputPointer)
+	protected virtual string AddToInputs(Enum key, string inputPointer)
 	{
 		if (key.ToString().ToLower().Contains("stack"))
 		{

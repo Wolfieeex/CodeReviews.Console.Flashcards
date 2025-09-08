@@ -6,7 +6,7 @@ using static Flashcards.Wolfieeex.Model.MultiInputMenuEnums;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 
-internal class UpdateFlashcardMenu : MulitInputMenu
+internal class UpdateFlashcardMenu : MultiInputMenu
 {
 	
 	public Flashcard oldFlashcardData { get; private set; }
