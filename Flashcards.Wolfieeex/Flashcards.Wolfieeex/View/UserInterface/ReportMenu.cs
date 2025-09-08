@@ -65,13 +65,13 @@ internal class ReportMenu : MultiInputMenu
 		if (sessions.Count == 0)
 		{
 			Console.WriteLine("Unfortunately, at this time it is not possible to run your report. There are no study sessions recorded yet.\n" +
-				" Press any button to return to a previous menu: ");
+				"Press any button to return to a previous menu: ");
 			Console.ReadKey();
 			Console.Clear();
 			return;
 		}
 
-		AddToInputs(ReportingMenuOptions.Display, DisplayOptions.HideEmptyColumns.ToString());
+		inputs.Add(ReportingMenuOptions.Display, GetDescription(DisplayOptions.HideEmptyColumns));
 		reportSettings.display = DisplayOptions.HideEmptyColumns;
 
 		bool mainLoop = true;
@@ -95,19 +95,19 @@ internal class ReportMenu : MultiInputMenu
 					Console.Clear();
 					return;
 				case MultiInputMenuEnums.ReportingMenuOptions.ReportOutput:
-					ReportOptionSelector(ReportingMenuOptions.ReportOutput, typeof(ReportType), "Select which type of the report you would like to run now:");
+					ReportOptionSelector(ReportingMenuOptions.ReportOutput, typeof(ReportType));
 					break;
 				case MultiInputMenuEnums.ReportingMenuOptions.PeriodSelection:
-					ReportOptionSelector(ReportingMenuOptions.PeriodSelection, typeof(PeriodOptions), "Select by which period you would like your report to be displayed:");
+					ReportOptionSelector(ReportingMenuOptions.PeriodSelection, typeof(PeriodOptions));
 					break;
 				case MultiInputMenuEnums.ReportingMenuOptions.Display:
-					ReportOptionSelector(ReportingMenuOptions.Display, typeof(DisplayOptions), "Choose if you want to display or hide empty columns:");
+					ReportOptionSelector(ReportingMenuOptions.Display, typeof(DisplayOptions));
 					break;
 			}
 		}
 	}
 
-	private void ReportOptionSelector(Enum reportSetting, Type selection, string title)
+	private void ReportOptionSelector(Enum reportSetting, Type selection)
 	{
 		Console.Clear();
 
@@ -118,7 +118,7 @@ internal class ReportMenu : MultiInputMenu
 			.HighlightStyle(style)
 			.AddChoices(selectionValues)
 			.UseConverter(s => GetDescription(s))
-			.Title(title));
+			.Title(GetDescription(reportSetting)));
 
 		if (Convert.ToInt32(selectorInput) == 0) return;
 
@@ -144,6 +144,6 @@ internal class ReportMenu : MultiInputMenu
 
 	private void RunReport()
 	{
-		throw new NotImplementedException("Run report is not ready at the moment.");
+
 	}
 }

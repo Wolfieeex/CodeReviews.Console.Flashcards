@@ -68,12 +68,12 @@ internal class MultiInputMenuEnums
 		Return,
 
 		[Description("Select what do you want to report:")]
-		[Display(Name = "")]
+		[Display(Name = "Report Type")]
 		[EnumLabelSpecialLabel(SpecialLabels.NonOptional)]
 		ReportOutput,
 
 		[Description("Select by which period you want to display your data: ")]
-		[Display(Name = "Report average percentage of your sessions")]
+		[Display(Name = "Period Options")]
 		[EnumLabelSpecialLabel(SpecialLabels.NonOptional)]
 		PeriodSelection,
 
