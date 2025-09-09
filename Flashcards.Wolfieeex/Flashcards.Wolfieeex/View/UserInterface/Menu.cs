@@ -1,6 +1,6 @@
 ﻿namespace Flashcards.Wolfieeex.View.UserInterface;
 
-using Flashcards.Wolfieeex.Model;
+using Flashcards.Wolfieeex.Model.Enums;
 using Spectre.Console;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;

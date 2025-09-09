@@ -1,6 +1,6 @@
 ﻿using Spectre.Console;
 using System.Text.RegularExpressions;
-using static Flashcards.Wolfieeex.Model.InputValidationEnums;
+using static Flashcards.Wolfieeex.Model.Enums.InputValidationEnums;
 using static Flashcards.Wolfieeex.View.UserInterface.Menu;
 using Flashcards.Wolfieeex.Controller.DataAccess;
 

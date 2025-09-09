@@ -1,51 +1,11 @@
 ﻿using Flashcards.Wolfieeex.Model;
 using Spectre.Console;
-using System.ComponentModel;
-using static Flashcards.Wolfieeex.Model.MultiInputMenuEnums;
+using static Flashcards.Wolfieeex.Model.Enums.ReportSettingsEnums;
+using static Flashcards.Wolfieeex.Model.Enums.MultiInputMenuEnums;
 using Flashcards.Wolfieeex.Controller.DataAccess;
+using Flashcards.Wolfieeex.Model.Enums;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
-enum DisplayOptions
-{
-	[Description("Return to Report Menu")]
-	ReturnToReportMenu,
-
-	[Description("Hide empty columns")]
-	HideEmptyColumns,
-
-	[Description("Display all columns")]
-	DisplayAllColumns
-}
-
-enum PeriodOptions
-{
-	[Description("Return to Report Menu")]
-	ReturnToReportMenu,
-
-	[Description("By week")]
-	ByWeek,
-
-	[Description("By month")]
-	ByMonth,
-
-	[Description("By quarter")]
-	ByQuarter,
-
-	[Description("By year")]
-	ByYear,
-}
-
-enum ReportType
-{
-	[Description("Return to Report Menu")]
-	ReturnToReportMenu,
-
-	[Description("Report number of study sessions")]
-	StudyCount,
-
-	[Description("Report average scores")]
-	AverageScore
-}
 
 internal class ReportMenu : MultiInputMenu
 {
@@ -144,6 +104,6 @@ internal class ReportMenu : MultiInputMenu
 
 	private void RunReport()
 	{
-
+		dataAccess.ReportToUser(reportSettings);
 	}
 }

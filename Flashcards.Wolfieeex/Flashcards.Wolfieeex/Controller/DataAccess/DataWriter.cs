@@ -171,4 +171,9 @@ internal class DataWriter : DbConnectionProvider
 			throw;
 		}
 	}
+
+	internal void BulkInsertSessions(List<StudySession> sessions)
+	{
+		throw new NotImplementedException();
+	}
 }

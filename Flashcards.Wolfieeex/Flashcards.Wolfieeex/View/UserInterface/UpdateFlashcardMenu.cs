@@ -2,7 +2,8 @@
 using Flashcards.Wolfieeex.Model;
 using Spectre.Console;
 using Flashcards.Wolfieeex.Controller.DataAccess;
-using static Flashcards.Wolfieeex.Model.MultiInputMenuEnums;
+using static Flashcards.Wolfieeex.Model.Enums.MultiInputMenuEnums;
+using Flashcards.Wolfieeex.Model.Enums;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 

@@ -1,4 +1,4 @@
-﻿namespace Flashcards.Wolfieeex.Model
+﻿namespace Flashcards.Wolfieeex.Model.Enums
 {
 	public enum SpecialLabels
 	{

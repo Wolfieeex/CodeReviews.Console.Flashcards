@@ -1,4 +1,4 @@
-﻿using Flashcards.Wolfieeex.View.UserInterface;
+﻿using static Flashcards.Wolfieeex.Model.Enums.ReportSettingsEnums;
 
 namespace Flashcards.Wolfieeex.Model;
 

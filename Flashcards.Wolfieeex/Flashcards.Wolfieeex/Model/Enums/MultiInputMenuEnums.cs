@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Flashcards.Wolfieeex.Model;
+namespace Flashcards.Wolfieeex.Model.Enums;
 
 internal class MultiInputMenuEnums
 {

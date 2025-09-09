@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Flashcards.Wolfieeex.Model;
+using static Flashcards.Wolfieeex.Model.Enums.ReportSettingsEnums;
 using Microsoft.Data.SqlClient;
 
 namespace Flashcards.Wolfieeex.Controller.DataAccess;
@@ -91,7 +92,14 @@ internal class DataReader : DbConnectionProvider
 		{
 			connection.Open();
 
+			string reportType = reportSettings.type == ReportType.StudyCount ? "AVG(Percentage)" : "COUNT(*)";
 
+			string command = @$"SELECT {reportType} 
+								FROM StudySessions
+								GROUP BY Date";
+
+			var reader = connection.Query(command);
+			string someting = "";
 		}
 	}
 }

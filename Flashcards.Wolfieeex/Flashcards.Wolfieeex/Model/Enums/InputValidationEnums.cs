@@ -1,4 +1,4 @@
-﻿namespace Flashcards.Wolfieeex.Model;
+﻿namespace Flashcards.Wolfieeex.Model.Enums;
 
 internal class InputValidationEnums
 {

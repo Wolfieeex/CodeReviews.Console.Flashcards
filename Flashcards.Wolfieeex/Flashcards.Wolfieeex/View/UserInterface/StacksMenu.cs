@@ -2,8 +2,8 @@
 using Flashcards.Wolfieeex.Model;
 using Spectre.Console;
 using Flashcards.Wolfieeex.Controller.DataAccess;
-using static Flashcards.Wolfieeex.Model.InputValidationEnums;
-using static Flashcards.Wolfieeex.Model.SelectionEnums;
+using static Flashcards.Wolfieeex.Model.Enums.InputValidationEnums;
+using static Flashcards.Wolfieeex.Model.Enums.SelectionEnums;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 

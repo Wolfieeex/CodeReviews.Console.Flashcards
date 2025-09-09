@@ -34,8 +34,50 @@ internal class SeedData
 			new Flashcard { StackId = 4, Question = "Danke", Answer = "Thank you" },
 			new Flashcard { StackId = 5, Question = "Gracias", Answer = "Thank you" }
 		};
-
 		var dataAccess = new DataAccessor();
 		dataAccess.BulkInsertRecords(stacks, flashcards);
+
+		List<StudySession> sessions = new();
+		double startTick = new DateTime(2023, 01, 01).Ticks;
+		double endTick = DateTime.Now.Ticks;
+		int numberOfSeeds = 500;
+		Random random = new Random();
+
+		for (int i = 0; i < 500, i++)
+		{
+			int stackId;
+			DateTime randomDate;
+			int questions;
+			int correctAnswers;
+			int percentage;
+			TimeSpan timeSpan;
+
+			stackId = random.Next(1, 6);
+
+			double tNumber = random.NextDouble();
+			tNumber = Math.Pow(tNumber, 0.3);
+			int lerpedTickValue = (int)Math.Round(startTick + (endTick - startTick) * tNumber);
+			int stacksCount = dataAccess.GetAllStacks().Count();
+			randomDate = new DateTime(lerpedTickValue);
+
+			questions = random.Next(1, 4);
+			correctAnswers = random.Next(1, questions + 1);
+			percentage = (int)((double)correctAnswers / questions * 100);
+
+			int seconds = random.Next(15, 61);
+			timeSpan = TimeSpan.FromSeconds(seconds);
+
+			StudySession studySession = new StudySession()
+			{
+				StackId = stackId,
+				Date = randomDate,
+				Questions = questions,
+				CorrectAnswers = correctAnswers,
+				Percentage = percentage,
+				Time = timeSpan
+			};
+			sessions.Add(studySession);
+		}
+		dataAccess.BulkInsertSessions(sessions);
 	}
 }

@@ -1,5 +1,5 @@
 ﻿using Spectre.Console;
-using static Flashcards.Wolfieeex.Model.SelectionEnums;
+using static Flashcards.Wolfieeex.Model.Enums.SelectionEnums;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 
