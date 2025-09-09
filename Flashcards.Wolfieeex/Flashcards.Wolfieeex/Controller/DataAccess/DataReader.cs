@@ -93,14 +93,43 @@ internal class DataReader : DbConnectionProvider
 		{
 			connection.Open();
 
-			string reportType = reportSettings.type == ReportType.StudyCount ? "AVG(Percentage)" : "COUNT(*)";
+			List<int> years = new();
+			foreach (var session in sessions)
+			{
+				if (!years.Contains(session.Date.Year))
+					years.Add(session.Date.Year);
+			}
 
-			string command = @$"SELECT {reportType} 
+			string reportType = reportSettings.type != ReportType.StudyCount ? "AVG(Percentage)" : "COUNT(*)";
+			string period = reportSettings.period switch
+			{
+				PeriodOptions.ByWeek => "WEEK",
+				PeriodOptions.ByMonth => "MONTH",
+				PeriodOptions.ByQuarter => "QUARTER",
+				PeriodOptions.ByYear => "YEAR",
+				_ => throw new ArgumentOutOfRangeException("Period is given in an incorrect format.")
+			};
+
+			string yearPrefix = reportSettings.period != PeriodOptions.ByYear ? $"DATEPART({period}, Date), " : "";
+
+			foreach (var year in years)
+			{
+				string command = @$"SET DATEFIRST 1;
+								SELECT DATEPART({period}, Date), {reportType} 
 								FROM StudySessions
-								GROUP BY Date";
+								GROUP BY {yearPrefix}DATEPART({period}, Date)
+								ORDER BY DATEPART({period}, Date)";
 
-			var reader = connection.Query(command);
-			string someting = "";
+				var reader = connection.Query(command);
+
+				Console.Clear();
+				foreach (var item in reader)
+				{
+					Console.WriteLine(item);
+				}
+				Console.ReadKey();
+				Console.Clear();
+			}
 		}
 	}
 }

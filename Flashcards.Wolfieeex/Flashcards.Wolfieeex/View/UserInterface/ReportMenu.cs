@@ -90,13 +90,13 @@ internal class ReportMenu : MultiInputMenu
 
 		switch (reportSetting)
 		{
-			case ReportingMenuOptions.PeriodSelection:
+			case ReportingMenuOptions.ReportOutput:
 				reportSettings.type = (ReportType)selectorInput;
 				break;
 			case ReportingMenuOptions.Display:
 				reportSettings.display = (DisplayOptions)selectorInput;
 				break;
-			case ReportingMenuOptions.ReportOutput:
+			case ReportingMenuOptions.PeriodSelection:
 				reportSettings.period = (PeriodOptions)selectorInput;
 				break;
 		}

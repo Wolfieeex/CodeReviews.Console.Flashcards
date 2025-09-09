@@ -40,10 +40,10 @@ internal class SeedData
 		List<StudySession> sessions = new();
 		long startTick = new DateTime(2023, 01, 01).Ticks;
 		long endTick = DateTime.Now.Ticks;
-		int numberOfSeeds = 500;
+		int numberOfSeeds = 20;
 		Random random = new Random();
 
-		for (int i = 0; i < 500; i++)
+		for (int i = 0; i < numberOfSeeds; i++)
 		{
 			int stackId;
 			DateTime randomDate;
