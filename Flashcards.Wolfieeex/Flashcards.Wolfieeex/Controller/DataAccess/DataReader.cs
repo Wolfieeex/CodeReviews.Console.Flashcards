@@ -15,7 +15,8 @@ internal class DataReader : DbConnectionProvider
 		string sql = @"
             SELECT s.Name as StackName, ss.Date, ss.Questions, ss.CorrectAnswers, ss.Percentage, ss.Time
             FROM StudySessions ss
-            INNER JOIN Stacks s ON ss.StackId = s.Id";
+            INNER JOIN Stacks s ON ss.StackId = s.Id
+			ORDER BY Date";
 
 		return connection.Query<StudySessionDTO>(sql).ToList();
 	}

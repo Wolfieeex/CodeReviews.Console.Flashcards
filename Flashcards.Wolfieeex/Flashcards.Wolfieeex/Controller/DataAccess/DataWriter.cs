@@ -174,6 +174,19 @@ internal class DataWriter : DbConnectionProvider
 
 	internal void BulkInsertSessions(List<StudySession> sessions)
 	{
-		throw new NotImplementedException();
+		using var connection = new SqlConnection(ConnectionString);
+		connection.Open();
+		using var transaction = connection.BeginTransaction();
+
+		try
+		{
+			connection.Execute("INSERT INTO StudySessions (Questions, Date, CorrectAnswers, Time, StackId) VALUES (@Questions, @Date, @CorrectAnswers, @Time, @StackId)", sessions, transaction: transaction);
+			transaction.Commit();
+		}
+		catch
+		{
+			transaction.Rollback();
+			throw;
+		}
 	}
 }

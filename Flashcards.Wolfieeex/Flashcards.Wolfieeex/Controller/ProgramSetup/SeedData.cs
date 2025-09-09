@@ -38,12 +38,12 @@ internal class SeedData
 		dataAccess.BulkInsertRecords(stacks, flashcards);
 
 		List<StudySession> sessions = new();
-		double startTick = new DateTime(2023, 01, 01).Ticks;
-		double endTick = DateTime.Now.Ticks;
+		long startTick = new DateTime(2023, 01, 01).Ticks;
+		long endTick = DateTime.Now.Ticks;
 		int numberOfSeeds = 500;
 		Random random = new Random();
 
-		for (int i = 0; i < 500, i++)
+		for (int i = 0; i < 500; i++)
 		{
 			int stackId;
 			DateTime randomDate;
@@ -56,13 +56,11 @@ internal class SeedData
 
 			double tNumber = random.NextDouble();
 			tNumber = Math.Pow(tNumber, 0.3);
-			int lerpedTickValue = (int)Math.Round(startTick + (endTick - startTick) * tNumber);
-			int stacksCount = dataAccess.GetAllStacks().Count();
+			long lerpedTickValue = (long)Math.Round(startTick + (endTick - startTick) * tNumber);
 			randomDate = new DateTime(lerpedTickValue);
 
 			questions = random.Next(1, 4);
-			correctAnswers = random.Next(1, questions + 1);
-			percentage = (int)((double)correctAnswers / questions * 100);
+			correctAnswers = random.Next(0, questions + 1);
 
 			int seconds = random.Next(15, 61);
 			timeSpan = TimeSpan.FromSeconds(seconds);
@@ -73,7 +71,6 @@ internal class SeedData
 				Date = randomDate,
 				Questions = questions,
 				CorrectAnswers = correctAnswers,
-				Percentage = percentage,
 				Time = timeSpan
 			};
 			sessions.Add(studySession);
