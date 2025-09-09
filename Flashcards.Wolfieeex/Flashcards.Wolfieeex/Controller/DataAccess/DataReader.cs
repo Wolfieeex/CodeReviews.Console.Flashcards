@@ -85,7 +85,7 @@ internal class DataReader : DbConnectionProvider
 			})?.Question;
 	}
 
-	internal void ReportToUser(ReportSettings reportSettings)
+	internal List<dynamic> ReportToUser(ReportSettings reportSettings)
 	{
 		var sessions = GetStudySessionData();
 
@@ -110,26 +110,23 @@ internal class DataReader : DbConnectionProvider
 				_ => throw new ArgumentOutOfRangeException("Period is given in an incorrect format.")
 			};
 
-			string yearPrefix = reportSettings.period != PeriodOptions.ByYear ? $"DATEPART({period}, Date), " : "";
+			string yearPrefix = reportSettings.period != PeriodOptions.ByYear ? $"DATEPART(YEAR, Date), " : "";
+			string concatPrefix = reportSettings.period != PeriodOptions.ByYear ? " + " : "";
 
+			List<dynamic> rows = new List<dynamic>();
 			foreach (var year in years)
 			{
 				string command = @$"SET DATEFIRST 1;
-								SELECT DATEPART({period}, Date), {reportType} 
+								SELECT {yearPrefix}{concatPrefix}DATENAME({period}, Date), {reportType} 
 								FROM StudySessions
-								GROUP BY {yearPrefix}DATEPART({period}, Date)
+								WHERE DATEPART(YEAR, Date) = {year}
+								GROUP BY {yearPrefix}DATEPART({period}, Date), DATENAME({period}, Date)
 								ORDER BY DATEPART({period}, Date)";
 
 				var reader = connection.Query(command);
-
-				Console.Clear();
-				foreach (var item in reader)
-				{
-					Console.WriteLine(item);
-				}
-				Console.ReadKey();
-				Console.Clear();
+				rows.Add(reader);
 			}
+			return rows;
 		}
 	}
 }

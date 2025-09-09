@@ -14,7 +14,7 @@ internal class DataAccessor
 	internal string GetStackName(int stackId) => _reader.GetStackName(stackId);
 	internal Flashcard GetFlashcard(int stackId, int flashcardId) => _reader.GetFlashcard(stackId, flashcardId);
 	internal string GetFlashcardName(int stackId, int flashcardId) => _reader.GetFlashcardName(stackId, flashcardId);
-	internal void ReportToUser(ReportSettings settings) => _reader.ReportToUser(settings);
+	internal List<dynamic> ReportToUser(ReportSettings settings) => _reader.ReportToUser(settings);
 
 	internal void CreateTables() => _writer.CreateTables();
 	internal void InsertStack(Stack stack) => _writer.InsertStack(stack);

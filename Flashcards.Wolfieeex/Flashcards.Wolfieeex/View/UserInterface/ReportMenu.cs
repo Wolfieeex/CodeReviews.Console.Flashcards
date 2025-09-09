@@ -104,6 +104,16 @@ internal class ReportMenu : MultiInputMenu
 
 	private void RunReport()
 	{
-		dataAccess.ReportToUser(reportSettings);
+		var rows = dataAccess.ReportToUser(reportSettings);
+
+		foreach (var row in rows)
+		{
+			foreach (var record in row)
+			{
+				Console.WriteLine(record);
+			}
+		}
+		Console.ReadKey();
+		Console.Clear();
 	}
 }
