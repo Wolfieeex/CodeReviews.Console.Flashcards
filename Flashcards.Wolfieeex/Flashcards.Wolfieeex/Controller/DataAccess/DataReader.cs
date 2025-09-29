@@ -13,7 +13,7 @@ internal class DataReader : DbConnectionProvider
 		connection.Open();
 
 		string sql = @"
-            SELECT s.Name as StackName, ss.Date, ss.Questions, ss.CorrectAnswers, ss.Percentage, ss.Time
+            SELECT s.Name AS StackName, ss.Date, ss.Questions, ss.CorrectAnswers, ss.Percentage, ss.Time
             FROM StudySessions ss
             INNER JOIN Stacks s ON ss.StackId = s.Id
 			ORDER BY Date";
@@ -85,7 +85,7 @@ internal class DataReader : DbConnectionProvider
 			})?.Question;
 	}
 
-	internal List<dynamic> ReportToUser(ReportSettings reportSettings)
+	internal List<List<ReportRow>> ReportToUser(ReportSettings reportSettings)
 	{
 		var sessions = GetStudySessionData();
 
@@ -110,20 +110,17 @@ internal class DataReader : DbConnectionProvider
 				_ => throw new ArgumentOutOfRangeException("Period is given in an incorrect format.")
 			};
 
-			string yearPrefix = reportSettings.period != PeriodOptions.ByYear ? $"DATEPART(YEAR, Date), " : "";
-			string concatPrefix = reportSettings.period != PeriodOptions.ByYear ? " + " : "";
-
-			List<dynamic> rows = new List<dynamic>();
+			List<List<ReportRow>> rows = new List<List<ReportRow>>();
 			foreach (var year in years)
 			{
 				string command = @$"SET DATEFIRST 1;
-								SELECT {yearPrefix}{concatPrefix}DATENAME({period}, Date), {reportType} 
+								SELECT DATEPART(YEAR, Date) AS Year, DATENAME({period}, Date) AS Period, {reportType} AS Value
 								FROM StudySessions
 								WHERE DATEPART(YEAR, Date) = {year}
-								GROUP BY {yearPrefix}DATEPART({period}, Date), DATENAME({period}, Date)
+								GROUP BY DATEPART(YEAR, Date), DATEPART({period}, Date), DATENAME({period}, Date)
 								ORDER BY DATEPART({period}, Date)";
 
-				var reader = connection.Query(command);
+				List<ReportRow> reader = connection.Query<ReportRow>(command).ToList();
 				rows.Add(reader);
 			}
 			return rows;

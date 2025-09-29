@@ -1,9 +1,10 @@
-﻿using Flashcards.Wolfieeex.Model;
-using Spectre.Console;
-using static Flashcards.Wolfieeex.Model.Enums.ReportSettingsEnums;
-using static Flashcards.Wolfieeex.Model.Enums.MultiInputMenuEnums;
-using Flashcards.Wolfieeex.Controller.DataAccess;
+﻿using Flashcards.Wolfieeex.Controller.DataAccess;
+using Flashcards.Wolfieeex.Model;
 using Flashcards.Wolfieeex.Model.Enums;
+using Spectre.Console;
+using System.Globalization;
+using static Flashcards.Wolfieeex.Model.Enums.MultiInputMenuEnums;
+using static Flashcards.Wolfieeex.Model.Enums.ReportSettingsEnums;
 
 namespace Flashcards.Wolfieeex.View.UserInterface;
 
@@ -106,14 +107,92 @@ internal class ReportMenu : MultiInputMenu
 	{
 		var rows = dataAccess.ReportToUser(reportSettings);
 
-		foreach (var row in rows)
+		Table reportTable = new Table();
+		reportTable.BorderStyle = new Style(foreground: menuColors.Important2Color);
+		reportTable.ShowRowSeparators = true;
+		reportTable.Title("Report");
+
+
+		// The extract function will not work for months, which are the actual names of the months.
+		if (reportSettings.display == ReportSettingsEnums.DisplayOptions.HideEmptyColumns)
 		{
-			foreach (var record in row)
+			List<int> columnIds = new();
+			ExtractColumnIds(rows, ref columnIds);
+			switch (reportSettings.period)
 			{
-				Console.WriteLine(record);
+				case ReportSettingsEnums.PeriodOptions.ByYear:
+					reportTable.AddColumns(new string[]{ "Year", "Value"});
+					break;
+				case ReportSettingsEnums.PeriodOptions.ByQuarter:
+					foreach (var id in columnIds)
+					{
+						reportTable.AddColumn("Quarter " + id);
+					}
+					break;
+				case ReportSettingsEnums.PeriodOptions.ByMonth:
+					foreach (var id in columnIds)
+					{
+						reportTable.AddColumn("Quarter " + id);
+					}
+					break;
+				case ReportSettingsEnums.PeriodOptions.ByWeek:
+					foreach (var id in columnIds)
+					{
+						reportTable.AddColumn("Week " + id);
+					}
+					break;
 			}
 		}
+		else
+		{
+			switch (reportSettings.period)
+			{
+				case ReportSettingsEnums.PeriodOptions.ByYear:
+					reportTable.AddColumns(new string[] { "Year", "Value" });
+					break;
+				case ReportSettingsEnums.PeriodOptions.ByQuarter:
+					for (int i = 1; i <= 4; i++)
+					{
+						reportTable.AddColumn("Quarter " + i.ToString());
+					}
+					break;
+				case ReportSettingsEnums.PeriodOptions.ByMonth:
+					string[] names = DateTimeFormatInfo.CurrentInfo.MonthNames;
+					reportTable.AddColumn("Year");
+					reportTable.AddColumns(names);
+					break;
+				case ReportSettingsEnums.PeriodOptions.ByWeek:
+					for (int i = 1; i <= 53; i++)
+					{
+						reportTable.AddColumn("Week " + i.ToString());
+					}
+					break;
+			}
+		}
+
+		foreach (var rowList in rows)
+		{
+			foreach (var row in rowList)
+			{
+
+			}
+		}
+
 		Console.ReadKey();
 		Console.Clear();
+	}
+
+	private static void ExtractColumnIds(List<List<ReportRow>> rows, ref List<int> columnIds)
+	{
+		foreach (var rowList in rows)
+		{
+			foreach (var row in rowList)
+			{
+				if (!columnIds.Contains(Convert.ToInt32(row.Period)))
+				{
+					columnIds.Add(Convert.ToInt32(row.Period));
+				}
+			}
+		}
 	}
 }
